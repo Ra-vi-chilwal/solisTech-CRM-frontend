@@ -23,7 +23,7 @@ export default function Routes() {
     const routes = MainRoutes && MainRoutes.children;
     const permitRoutes = {
         ...MainRoutes, children: routes && routes.map((item) => {
-            if (item.permissions && item.permissions.every((el) => permissions && permissions.some((ele) => el.value == ele))) {
+            if (item.permissions && item.permissions.every((el) => permissions && permissions.some((ele) => el.value == ele.value))) {
                 return item
             }
             else {

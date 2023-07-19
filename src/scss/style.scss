@@ -160,7 +160,7 @@ $enable-rtl: true;
   select,
   textarea {
     font-family: inherit; /* 1 */
-    font-size: 100%; /* 1 */
+    font-size: 80% !important; /* 1 */
     font-weight: inherit; /* 1 */
     line-height: inherit; /* 1 */
     color: inherit; /* 1 */
@@ -332,7 +332,7 @@ $enable-rtl: true;
     display: none;
   }
   body {
-      font-family: "Poppins", sans-serif;
+      font-family: "Poppins", sans-serif !important;
     }
   *, ::before, ::after{
     --tw-border-spacing-x: 0;
@@ -1276,7 +1276,7 @@ $enable-rtl: true;
   }
   .text-body-color{
     --tw-text-opacity: 1;
-    color: rgb(149 156 177 / var(--tw-text-opacity));
+    color: #655a5a;
   }
   .text-black{
     --tw-text-opacity: 1;

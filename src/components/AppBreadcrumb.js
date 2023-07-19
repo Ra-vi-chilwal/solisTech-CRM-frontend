@@ -1,32 +1,32 @@
 import React from 'react'
-import { useLocation } from 'react-router-dom'
-
-import routes from '../routes'
-
-import { CBreadcrumb, CBreadcrumbItem } from '@coreui/react'
-
-const AppBreadcrumb = () => {
+import { Link } from 'react-router-dom';
 
 
+function AppBreadcrumb(props) {
+    const title = props && props.title;
+    const links = props && props.links;
+    return (
+        <div className="page-titles">
+            <ol className="breadcrumb">
+                <li>
+                    <h5 className="bc-title">{title}</h5>
+                </li>
+                <li className="breadcrumb-item">
+                    <Link to="/">
+                        <i className='icon icon-home' style={{ fontSize: "25px" }}></i>
+                    </Link>
+                </li>
+                {links && links.map((item, index) => {
+                    return (
+                        <li className="breadcrumb-item tx-15" key={index}>
+                            <Link to={item.link}>{item.page}</Link>
+                        </li>
+                    )
+                })}
+            </ol>
+        </div>
 
-  return (
-    <>
-    <h1>breadcrumb</h1>
-    </>
-    // <CBreadcrumb className="m-0 ms-2">
-    //   <CBreadcrumbItem href="/">Home</CBreadcrumbItem>
-    //   {breadcrumbs.map((breadcrumb, index) => {
-    //     return (
-    //       <CBreadcrumbItem
-    //         {...(breadcrumb.active ? { active: true } : { href: breadcrumb.pathname })}
-    //         key={index}
-    //       >
-    //         {breadcrumb.name}
-    //       </CBreadcrumbItem>
-    //     )
-    //   })}
-    // </CBreadcrumb>
-  )
+    )
 }
 
-export default React.memo(AppBreadcrumb)
+export default AppBreadcrumb

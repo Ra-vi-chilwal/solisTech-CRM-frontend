@@ -10,17 +10,17 @@ const fetchUserInfo = (values) => {
   return async (dispatch) => {
     try {
       dispatch({ type: USER_INFO_REQUEST });
-      const data = await axios.post(`${config.API_URL}/auth/login`, values);
-      const userInfo = data.data;
+      const response = await axios.post(`${config.API_URL}/auth/login`, values);
+      const userInfo = response.data;
       if (userInfo.code === "FETCHED" && userInfo !== null) {
         localStorage.setItem("token", userInfo.token);
         dispatch({ type: USER_INFO_SUCCESS, payload: userInfo });
       } else {
-        console.log("error");
+        dispatch({ type: USER_INFO_FAIL, payload: "Invalid user info" });
       }
     } catch (err) {
       console.log(err);
-      dispatch({ type: USER_INFO_FAIL, payload: err });
+      dispatch({ type: USER_INFO_FAIL, payload: err.message });
     }
   };
 };

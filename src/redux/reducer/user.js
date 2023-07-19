@@ -5,19 +5,38 @@ import {
   USER_LOG_OUT,
 } from "../constant/user";
 
-const token = localStorage.getItem("token") || " ";
-const userInfoReducer = (state = { userInfo: { token: token } }, action) => {
+const token = localStorage.getItem("token") || "";
+const initialState = {
+  loading: false,
+  userInfo: {
+    token: token,
+  },
+};
+
+const userInfoReducer = (state = initialState, action) => {
   switch (action.type) {
     case USER_INFO_REQUEST:
-      return { loading: true };
+      return { ...state, loading: true };
     case USER_INFO_SUCCESS:
-      return { loading: false, userInfo: action.payload };
+      return { ...state, loading: false, userInfo: action.payload };
     case USER_INFO_FAIL:
-      return { loading: false, error: action.payload };
+      return { ...state, loading: false, error: action.payload };
     case USER_LOG_OUT:
-      return { loading: false, logout: "loggedOut" };
+      return { ...state, loading: false, logout: "loggedOut" };
     default:
       return state;
   }
 };
+// const usersList = (state = { users: [] }, action) => {
+//   switch (action.type) {
+//       case USERS_REQUEST:
+//           return { loading: true };
+//       case USERS_SUCCESS:
+//           return { loading: false, users: action.payload };
+//       case USERS_FAIL:
+//           return { loading: false, error: action.payload };
+//       default:
+//           return state;
+//   }
+// }
 export { userInfoReducer };
