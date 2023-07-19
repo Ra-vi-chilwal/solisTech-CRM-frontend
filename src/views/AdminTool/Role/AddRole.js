@@ -5,7 +5,7 @@ import * as Yup from "yup";
 import axios from "axios";
 import config from '../../../config'
 import { useSelector } from "react-redux";
-import user from "../User/user";
+// import user from "../User/user";
 function AddRole(props) {
   const showModal = props && props.showModal;
   const setShowModal = props && props.setShowModal;

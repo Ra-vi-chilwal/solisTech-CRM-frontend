@@ -4,7 +4,7 @@ const Dashboard = React.lazy(() => import('../../views/dashboard/Dashboard'))
 const Role = React.lazy(() => import('../../views/AdminTool/Role'))
 const Plan = React.lazy(() => import('../../views/AdminTool/Plan'))
 const Company = React.lazy(() => import('../../views/AdminTool/Company'))
-const User = React.lazy(() => import('../../views/AdminTool/User/user'))
+const User = React.lazy(() => import('../../views/AdminTool/User'))
 const MainRoutes = {
 path:"/",
 element:<DefaultLayout/>,

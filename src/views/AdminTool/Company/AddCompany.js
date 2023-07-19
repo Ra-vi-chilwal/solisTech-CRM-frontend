@@ -1,49 +1,62 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import Select from "react-select";
 import * as Yup from "yup";
 import axios from "axios";
 import config from '../../../config'
-import { useSelector } from "react-redux";
-import user from "../User/user";
+import { useDispatch, useSelector } from "react-redux";
+import {fetchPlan} from "../../../redux/action/plan/plan"
+// import user from "../User/user";
 function AddRole(props) {
+
+
   const showModal = props && props.showModal;
   const setShowModal = props && props.setShowModal;
   const { loading, userInfo, error } =
-  useSelector((store) => store.userInfo) || " ";
-  const checkrole = userInfo?.payload?.role?.[0] 
+    useSelector((store) => store.userInfo) || " ";
+  const checkrole = userInfo?.payload?.role?.[0]
   const [selected, setSelected] = useState(null);
 
-const users = userInfo
+  const users = userInfo
+
+
+  const dispatch = useDispatch()
+  useEffect(() => {
+      dispatch(fetchPlan());
+  }, [])
+  const {planInfo } =useSelector((store) => store) || " ";
+const plan = planInfo?.userInfo?.data;
   const initialValues = {
-    company:"" ,
+    company: "",
     email: "",
     plan: "",
-    PurchasedOn:"",
-    companyLogo:"",
+    PurchasedOn: "",
+    companyLogo: "",
   };
 
   console.log(initialValues)
   const validationSchema = Yup.object({
-    company: Yup.string().required("companyis required"),
+    company: Yup.string().required("company is required"),
     email: Yup.string().required("email is required"),
     plan: Yup.string().required("plan is required"),
     PurchasedOn: Yup.string().required("PurchasedOn is required"),
-   
+
   });
   const onSubmit = async (values) => {
 
     try {
-    const response = await axios.post(`${config.API_URL}/company/add`,
-    {...values,companyLogo:selected}, {headers: {
-      'Content-Type': 'multipart/form-data', // Set the content type for file upload
-      // Add any other headers you need
-   }});
-    const userData = response.data;
-    console.log(userData)
-   } catch (error) {
-    console.log(error)
-   }
+      const response = await axios.post(`${config.API_URL}/company/add`,
+        { ...values, companyLogo: selected }, {
+          headers: {
+            'Content-Type': 'multipart/form-data', // Set the content type for file upload
+            // Add any other headers you need
+          }
+      });
+      const userData = response.data;
+      console.log(userData)
+    } catch (error) {
+      console.log(error)
+    }
   };
   return (
     <div>
@@ -70,6 +83,17 @@ const users = userInfo
               onSubmit={onSubmit}
             >
               {({ values, setFieldValue, errors, dirty, isValid }) => {
+                const selectedDate = new Date(values?.PurchasedOn);
+                const timeInMilliseconds = selectedDate?.getTime() + (366 * 24 * 60 * 60 * 1000);
+                const timestamp = new Date(timeInMilliseconds);
+                const date = new Date(timestamp);
+
+                const day = date?.getDate().toString().padStart(2, "0");
+                const month = (date?.getMonth() + 1).toString().padStart(2, "0");
+                const year = date?.getFullYear().toString().padStart(4, "0");
+
+                const formattedDate = `${day}-${month}-${year}`;
+                console.log(formattedDate)
                 return (
                   <Form>
                     <div className="relative p-6 flex-auto">
@@ -84,10 +108,10 @@ const users = userInfo
                             </label>
                             <Field
                               name="company"
-                              
+
                               type="text"
-                              disabled= {checkrole?.title =="superAdmin" ? false: true}
-                              placeholder="Enter your  Company ID"
+                              disabled={checkrole?.title == "superAdmin" ? false : true}
+                              placeholder="Enter your  Company Name"
                               className="w-full rounded-md border border-transparent py-2.5 px-6 text-base text-body-color placeholder-body-color shadow-one outline-none focus:border-primary focus-visible:shadow-none dark:bg-[#242B51] dark:shadow-signUp"
                             />
                             <ErrorMessage
@@ -104,12 +128,12 @@ const users = userInfo
                               htmlFor="email"
                               className="mb-3 block text-sm font-medium text-dark dark:text-white"
                             >
-                              Comapny Email
+                              company Email
                             </label>
                             <Field
                               name="email"
                               type="email"
-                              placeholder="Enter your Title"
+                              placeholder="Enter Company Email"
                               className="w-full rounded-md border border-transparent py-2.5 px-6 text-base text-body-color placeholder-body-color shadow-one outline-none focus:border-primary focus-visible:shadow-none dark:bg-[#242B51] dark:shadow-signUp"
                             />
                             <ErrorMessage
@@ -129,18 +153,24 @@ const users = userInfo
                               Plan
                             </label>
                             <Field
-                             as="select"
+                              as="select"
                               type="text"
                               name="plan"
-                             
+
                               placeholder='Enter your Plan'
                               className="w-full rounded-md border border-transparent py-2.5 px-6 text-base text-body-color placeholder-body-color shadow-one outline-none focus:border-primary focus-visible:shadow-none dark:bg-[#242B51] dark:shadow-signUp"
                             >
                               <option >--SELECT PLAN--</option>
-                              <option >ABC</option>
-                              <option >PQR</option>
-                              <option >XYZ</option>
-                              <option >RRR</option>
+
+                              {plan  && plan.map((item)=>{
+                                return (
+                                  <>
+                                  <option value={item._id}>{item.planName}</option>
+                                  </>
+                                )
+                              })}
+                             
+                             
                             </Field>
                             <ErrorMessage
                               name="plan"
@@ -161,14 +191,7 @@ const users = userInfo
                             <Field
                               type="date"
                               name="PurchasedOn"
-                              onChange={(e) => {
-                                setFieldValue("PurchasedOn", e.target.value);
-                                setFieldValue(
-                                  "ExpireOn",
-                                  e.target.value
-                                    
-                                );
-                              }}
+                              
                               placeholder='PurchasedOn date'
                               className="w-full rounded-md border border-transparent py-2.5 px-6 text-base text-body-color placeholder-body-color shadow-one outline-none focus:border-primary focus-visible:shadow-none dark:bg-[#242B51] dark:shadow-signUp"
                             />
@@ -183,10 +206,11 @@ const users = userInfo
                               ExpireOn
                             </label>
                             <Field
-                              type="date"
+                              type="text"
                               name="ExpireOn"
-                             disabled={true}
-                              placeholder='PurchasedOn date'
+                              disabled={true}
+                              // defaultValue = {}
+                              placeholder={formattedDate}
                               className="w-full rounded-md border border-transparent py-2.5 px-6 text-base text-body-color placeholder-body-color shadow-one outline-none focus:border-primary focus-visible:shadow-none dark:bg-[#242B51] dark:shadow-signUp"
                             />
                           </div>
@@ -200,27 +224,27 @@ const users = userInfo
                               Company Logo
                             </label>
                             <Field
-                                  id="pdfFile"
-                                  type="file"
-                                  name="pdfFile"
-                                  className="form-control pt-1"
-                                  onChange={(e, element, param) => {
-                                    if ((element = e.target.files[0])) {
-                                      setSelected(element);
-                                    } else {
-                                      Swal.fire({
-                                        icon: "warning",
-                                        title: "Error",
-                                        text: "Something went wrong",
-                                        focusConfirm: true,
-                                        toast: true,
-                                        width: "450px",
-                                      }).then(function () {
-                                        navigate(0);
-                                      });
-                                    }
-                                  }}
-                                />
+                              id="pdfFile"
+                              type="file"
+                              name="pdfFile"
+                              className="form-control pt-1"
+                              onChange={(e, element, param) => {
+                                if ((element = e.target.files[0])) {
+                                  setSelected(element);
+                                } else {
+                                  Swal.fire({
+                                    icon: "warning",
+                                    title: "Error",
+                                    text: "Something went wrong",
+                                    focusConfirm: true,
+                                    toast: true,
+                                    width: "450px",
+                                  }).then(function () {
+                                    navigate(0);
+                                  });
+                                }
+                              }}
+                            />
                             <ErrorMessage
                               name="companyLogo"
                               render={(msg) => (

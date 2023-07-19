@@ -11,7 +11,7 @@ const AppFooter = () => {
       <div className="ms-auto">
         <span className="me-1">Powered by</span>
         <a href="https://coreui.io/react" target="_blank" rel="noopener noreferrer">
-        Designed with  by Solis Technology <i class="icon-heart"></i> Development Team All rights reserved
+        Designed with  by Solis Technology <i class="icon-heart" style={{color: "#f00528"}}></i> Development Team All rights reserved
         </a>
       </div>
     </CFooter>
