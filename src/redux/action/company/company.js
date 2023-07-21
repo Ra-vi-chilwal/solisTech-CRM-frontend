@@ -5,11 +5,12 @@ import {
     COMPANY_SUCCESS,
   } from "../../constant/company/company";
   import config from '../../../config'
-const fetchCompany = () => {
+const fetchCompany = (token) => {
+
     return async (dispatch) => {
       try {
         dispatch({ type: COMPANY_REQUEST });
-        const data = await axios.get(`${config.API_URL}/company/get`);
+        const data = await axios.get(`${config.API_URL}/company/get`, { headers: { Authorization: `Bearer ${token}` }});
         const companyData = data.data;
         console.log(companyData)
         dispatch({ type: COMPANY_SUCCESS, payload: companyData });

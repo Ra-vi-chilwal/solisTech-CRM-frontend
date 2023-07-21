@@ -5,6 +5,8 @@ import MainRoutes from './MainRoutes';
 import AuthRoutes from './AuthRoutes';
 import { useDispatch, useSelector } from 'react-redux';
 import { verifyUserInfo } from '../../redux/action/user';
+import { fetchCompany } from '../../redux/action/company/company';
+import { fetchRole } from '../../redux/action/role/role';
 import { useEffect, useState } from 'react';
 import UnAuthorised from '../../views/pages/page404/Page404';
 
@@ -17,6 +19,8 @@ export default function Routes() {
     const dispatch = useDispatch()
     useEffect(() => {
         dispatch(verifyUserInfo({ token }));
+        dispatch(fetchCompany(token));
+        dispatch(fetchRole(token));
     }, [])
 //     };
  const permissions =userInfo && userInfo.payload && userInfo.payload.role[0] && userInfo.payload.role[0].permission

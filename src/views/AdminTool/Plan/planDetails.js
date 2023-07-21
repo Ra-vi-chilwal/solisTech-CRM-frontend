@@ -7,10 +7,10 @@ import { useDispatch, useSelector } from "react-redux";
 import config from "../../../config";
 import {fetchPlan} from "../../../redux/action/plan/plan"
 function planDetails() {
-
+    var token = localStorage.getItem("token");
     const dispatch = useDispatch()
     useEffect(() => {
-        dispatch(fetchPlan());
+        dispatch(fetchPlan(token));
     }, [])
     const { loading, planInfo, error } =
     useSelector((store) => store) || " ";

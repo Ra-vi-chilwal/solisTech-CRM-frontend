@@ -14,7 +14,6 @@ function RoleDetails() {
   const { loading, companyInfo, error } = useSelector((store) => store) || " ";
   console.log(companyInfo.userInfo);
   const role = companyInfo?.userInfo?.data;
-
   const columns = [
     {
       name: "Company logo",
@@ -40,7 +39,12 @@ function RoleDetails() {
     },
     {
       name: "Purchased On",
-      selector: (row) => row?.PurchasedOn,
+      selector: (row) => new Date(row?.PurchasedOn).toDateString(),
+      sortable: true,
+    },
+    {
+      name: "Expire On",
+      selector: (row) => new Date(row?.expireOn).toDateString(),
       sortable: true,
     },
     {

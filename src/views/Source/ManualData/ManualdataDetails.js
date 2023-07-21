@@ -6,7 +6,7 @@ import "react-data-table-component-extensions/dist/index.css";
 import { useDispatch, useSelector } from "react-redux";
 
 import Loader from '../../../components/Loader/loader'
-function UserDetails() {
+function ManualdataDetails() {
    
   
 
@@ -70,4 +70,4 @@ const role = userApi?.userInfo?.data
     );
 }
 
-export default UserDetails;
+export default ManualdataDetails;

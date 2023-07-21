@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
-import AddUser from "./AddUser";
-import UserDetails from "./detailsUser";
+import AddmanualData from "./AddmanualData";
+import ManualdataDetails from "./ManualdataDetails";
 import { useDispatch } from "react-redux";
 import { fetchUserApi } from "../../../redux/action/UserApi/UserApi";
 
@@ -18,13 +18,13 @@ export default function Modal() {
         type="button"
         onClick={() => setShowModal(true)} style={{background:"#3C4B64" }}
       >
-        + Add User
+        + Add Source
       </button>
       {showModal ? (
         <>
-        <AddUser  showModal={showModal} setShowModal={setShowModal}/>
+        <AddmanualData  showModal={showModal} setShowModal={setShowModal}/>
         </>
-      ) : <UserDetails />}
+      ) : <ManualdataDetails />}
       
     </>
   );

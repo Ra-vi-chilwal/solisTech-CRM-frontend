@@ -3,35 +3,86 @@ import { ErrorMessage, Field, Form, Formik } from "formik";
 import Select from "react-select";
 import * as Yup from "yup";
 import axios from "axios";
-import config from '../../../config'
+import config from "../../../config";
 import { useSelector } from "react-redux";
+import Swal from 'sweetalert2'
 // import user from "../User/user";
 function AddUser(props) {
+  var token = localStorage.getItem("token");
   const showModal = props && props.showModal;
   const setShowModal = props && props.setShowModal;
+  const {  companyInfo } = useSelector((store) => store) || " ";
+  const company = companyInfo?.userInfo?.data
   const { loading, userInfo, error } =
-  useSelector((store) => store.userInfo) || " ";
-  const checkrole = userInfo?.payload?.role?.[0] 
-  const [selected, setSelected] = useState([permissionOptions[0]]);
-const users = userInfo
+    useSelector((store) => store.userInfo) || " ";
+    const {  userApi } =
+    useSelector((store) => store) || " ";
+//role
+const {RoleData} =
+useSelector((store) => store) || " ";
+const role = RoleData?.userInfo?.data;
   const initialValues = {
-    companyId: checkrole?.title =="superAdmin" ? " ": checkrole?.companyId,
-    title: "",
-    slug: "",
-  
+    firstName: "",
+    lastName: "",
+    password: "",
+    role: "",
+    gender:"",
+    company:""
   };
-  console.log(selected)
+
   const validationSchema = Yup.object({
-    companyId: Yup.string().required("companyId is required"),
-    title: Yup.string().required("title is required"),
+    firstName: Yup.string().required("First Name is required"),
+    lastName: Yup.string().required("Last Name is required"),
+    password: Yup.string()
+      .required()
+      .min(6, "Password is too short -should be 6 chars minimum"),
+    gender: Yup.string().required("Gender is required"),
+    email: Yup.string().required("Email is required"),
+    lastName: Yup.string().required("Last Name is required"),
+    role: Yup.string().required("Role is required"),
+    company:Yup.string().required("Role is required"),
   });
   const onSubmit = async (values) => {
-   try {
-    const response = await axios.post(`${config.API_URL}/role/add`,{companyId:values.companyId,title:values.title,slug:values.slug,permission:selected});
-    const userData = response.data;
-   } catch (error) {
-    console.log(error)
-   }
+    try {
+      const response = await axios.post(`${config.API_URL}/auth/register`, {
+       ...values
+        
+      },{
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json", // Set the content type for file upload
+          // Add any other headers you need
+        }
+      });
+      const userData = response.data;
+      console.log(response)
+      if(userData.code == "DUPLICATEDATA"){
+        Swal.fire({
+          icon: 'warning',
+          title: 'Oops...',
+          text: 'User Already Exists',
+
+        })
+        setShowModal(false)
+      }
+      if(userData.code == "CREATED"){
+        Swal.fire({
+          icon: 'success',
+          title: 'Woh...',
+          text: 'User Registered ',
+    
+        })
+        setShowModal(false)
+      }
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops',
+        text: error,
+  
+      })
+      setShowModal(false)
+    }
   };
   return (
     <div>
@@ -41,7 +92,7 @@ const users = userInfo
           <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-75 bg-white outline-none focus:outline-none">
             {/*header*/}
             <div className="flex items-start justify-between p-3 border-b border-solid border-slate-200 rounded-t">
-              <h3 className="text-xl ">Add Role</h3>
+              <h3 className="text-xl ">Add User</h3>
               <button
                 className="p-1 ml-auto bg-transparent border-0 text-black opacity-5 float-right text-3xl leading-none  outline-none focus:outline-none"
                 onClick={() => setShowModal(false)}
@@ -58,6 +109,7 @@ const users = userInfo
               onSubmit={onSubmit}
             >
               {({ values, setFieldValue, errors, dirty, isValid }) => {
+                
                 return (
                   <Form>
                     <div className="relative p-6 flex-auto">
@@ -68,18 +120,38 @@ const users = userInfo
                               htmlFor="name"
                               className="mb-3 block text-sm font-medium text-dark dark:text-white"
                             >
-                              Company ID
+                              firstName
                             </label>
                             <Field
-                              name="companyId"
-                              
+                              name="firstName"
                               type="text"
-                              disabled= {checkrole?.title =="superAdmin" ? false: true}
-                              placeholder="Enter your  Company ID"
+                              placeholder="Enter your  First Name"
                               className="w-full rounded-md border border-transparent py-2.5 px-6 text-base text-body-color placeholder-body-color shadow-one outline-none focus:border-primary focus-visible:shadow-none dark:bg-[#242B51] dark:shadow-signUp"
                             />
                             <ErrorMessage
-                              name="companyId"
+                              name="firstName"
+                              render={(msg) => (
+                                <small style={{ color: "red" }}>{msg}</small>
+                              )}
+                            />
+                          </div>
+                        </div>
+                        <div className="w-full px-4 md:w-1/2">
+                          <div className="mb-8">
+                            <label
+                              htmlFor="lastName"
+                              className="mb-3 block text-sm font-medium text-dark dark:text-white"
+                            >
+                              lastName
+                            </label>
+                            <Field
+                              name="lastName"
+                              type="text"
+                              placeholder="Enter your  Last Name"
+                              className="w-full rounded-md border border-transparent py-2.5 px-6 text-base text-body-color placeholder-body-color shadow-one outline-none focus:border-primary focus-visible:shadow-none dark:bg-[#242B51] dark:shadow-signUp"
+                            />
+                            <ErrorMessage
+                              name="lastName"
                               render={(msg) => (
                                 <small style={{ color: "red" }}>{msg}</small>
                               )}
@@ -92,25 +164,16 @@ const users = userInfo
                               htmlFor="email"
                               className="mb-3 block text-sm font-medium text-dark dark:text-white"
                             >
-                              Title
+                              Email
                             </label>
                             <Field
-                              name="title"
-                              onChange={(e) => {
-                                setFieldValue("title", e.target.value);
-                                setFieldValue(
-                                  "slug",
-                                  e.target.value
-                                    .toLowerCase()
-                                    .replace(/\s+/g, "-")
-                                );
-                              }}
-                              type="text"
-                              placeholder="Enter your Title"
+                              name="email"
+                              type="email"
+                              placeholder="Enter your Email"
                               className="w-full rounded-md border border-transparent py-2.5 px-6 text-base text-body-color placeholder-body-color shadow-one outline-none focus:border-primary focus-visible:shadow-none dark:bg-[#242B51] dark:shadow-signUp"
                             />
                             <ErrorMessage
-                              name="title"
+                              name="email"
                               render={(msg) => (
                                 <small style={{ color: "red" }}>{msg}</small>
                               )}
@@ -120,22 +183,19 @@ const users = userInfo
                         <div className="w-full px-4 md:w-1/2">
                           <div className="mb-8">
                             <label
-                              htmlFor="email"
+                              htmlFor="password"
                               className="mb-3 block text-sm font-medium text-dark dark:text-white"
                             >
-                              Slug
+                              password
                             </label>
                             <Field
-                              type="text"
-                              name="slug"
-                              value={initialValues.slug}
-                              disabled={true}
-                              style={{ background: "#3a353d3d" }}
-                              placeholder={values.slug}
+                              type="password"
+                              name="password"
+                              placeholder="Enter your password"
                               className="w-full rounded-md border border-transparent py-2.5 px-6 text-base text-body-color placeholder-body-color shadow-one outline-none focus:border-primary focus-visible:shadow-none dark:bg-[#242B51] dark:shadow-signUp"
                             />
                             <ErrorMessage
-                              name="slug"
+                              name="password"
                               render={(msg) => (
                                 <small style={{ color: "red" }}>{msg}</small>
                               )}
@@ -145,21 +205,95 @@ const users = userInfo
                         <div className="w-full px-4 md:w-1/2">
                           <div className="mb-8">
                             <label
-                              htmlFor="email"
-                              className="mb-3 block text-sm font-medium text-dark dark:text-white "
+                              htmlFor="gender"
+                              className="mb-3 block text-sm font-medium text-dark dark:text-white"
                             >
-                              Permissions
+                              Gender
                             </label>
-                            <Select
-                              defaultValue={[permissionOptions[0]]}
-                              isMulti
-                              name="permission"
-                              options={permissionOptions}
-                              className="basic-multi-select py-2.5 "
-                              classNamePrefix="select"
-                              onChange={setSelected}
-                              value={initialValues.permission}
-                             
+                            <Field
+                              as="select"
+                              type="text"
+                              name="gender"
+                              placeholder="Enter your Plan"
+                              className="w-full rounded-md border border-transparent py-2.5 px-6 text-base 
+                              text-body-color placeholder-body-color shadow-one outline-none focus:border-primary 
+                              focus-visible:shadow-none dark:bg-[#242B51] dark:shadow-signUp"
+                            >
+                              <option>--SELECT GENDER--</option>
+                              <option value="male">MALE</option>;
+                              <option value="female">FEMALE</option>
+                              <option value="other">OTHER</option>
+                            </Field>
+                            <ErrorMessage
+                              name="gender"
+                              render={(msg) => (
+                                <small style={{ color: "red" }}>{msg}</small>
+                              )}
+                            />
+                          </div>
+                        </div>
+                        <div className="w-full px-4 md:w-1/2">
+                          <div className="mb-8">
+                            <label
+                              htmlFor="company"
+                              className="mb-3 block text-sm font-medium text-dark dark:text-white"
+                            >
+                              Company
+                            </label>
+                            <Field
+                              as="select"
+                              type="text"
+                              name="company"
+                              placeholder="Enter your Company"
+                              className="w-full rounded-md border border-transparent py-2.5 px-6 text-base 
+                              text-body-color placeholder-body-color shadow-one outline-none focus:border-primary 
+                              focus-visible:shadow-none dark:bg-[#242B51] dark:shadow-signUp"
+                            >
+                              <option>--SELECT COMPANY--</option>
+                             {company?.map((ele)=>{
+                              return(
+
+                                <option key={ele._id} value={ele._id}>{ele.company}</option>
+                              )
+                             })} 
+                            </Field>
+                            <ErrorMessage
+                              name="company"
+                              render={(msg) => (
+                                <small style={{ color: "red" }}>{msg}</small>
+                              )}
+                            />
+                          </div>
+                        </div>
+                        <div className="w-full px-4 md:w-1/2">
+                          <div className="mb-8">
+                            <label
+                              htmlFor="plan"
+                              className="mb-3 block text-sm font-medium text-dark dark:text-white"
+                            >
+                              Role
+                            </label>
+                            <Field
+                              as="select"
+                              type="text"
+                              name="role"
+                              placeholder="Enter your Plan"
+                              className="w-full rounded-md border border-transparent py-2.5 px-6 text-base 
+                              text-body-color placeholder-body-color shadow-one outline-none focus:border-primary 
+                              focus-visible:shadow-none dark:bg-[#242B51] dark:shadow-signUp"
+                            >
+                              <option>--SELECT ROLE--</option>
+                           {role?.map((ele)=>{
+                            return(
+                              <option key={ele._id} value={ele._id}>{ele.title}</option>
+                            )
+                           })}
+                            </Field>
+                            <ErrorMessage
+                              name="role"
+                              render={(msg) => (
+                                <small style={{ color: "red" }}>{msg}</small>
+                              )}
                             />
                           </div>
                         </div>

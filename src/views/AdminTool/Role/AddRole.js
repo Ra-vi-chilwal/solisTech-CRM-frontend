@@ -5,14 +5,15 @@ import * as Yup from "yup";
 import axios from "axios";
 import config from '../../../config'
 import { useSelector } from "react-redux";
-// import user from "../User/user";
+import Swal from 'sweetalert2'
 function AddRole(props) {
   const showModal = props && props.showModal;
   const setShowModal = props && props.setShowModal;
   const { loading, userInfo, error } =
   useSelector((store) => store.userInfo) || " ";
   const checkrole = userInfo?.payload?.role?.[0] 
- 
+  var token = localStorage.getItem("token");
+
   const permissionOptions = [
     { value: "read", label: "Read" },
     { value: "create", label: "Create" },
@@ -20,24 +21,49 @@ function AddRole(props) {
     { value: "update", label: "Update" },
   ];
   const [selected, setSelected] = useState([permissionOptions[0]]);
-const users = userInfo
   const initialValues = {
     companyId: checkrole?.title =="superAdmin" ? " ": checkrole?.companyId,
     title: "",
     slug: "",
-  
   };
-  console.log(selected)
   const validationSchema = Yup.object({
     companyId: Yup.string().required("companyId is required"),
     title: Yup.string().required("title is required"),
   });
   const onSubmit = async (values) => {
    try {
-    const response = await axios.post(`${config.API_URL}/role/add`,{companyId:values.companyId,title:values.title,slug:values.slug,permission:selected});
+    const response = await axios.post(`${config.API_URL}/role/add`,{companyId:values.companyId,title:values.title,slug:values.slug,permission:selected}, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
     const userData = response.data;
+    if(userData.code == "DUPLICATEDATA"){
+      Swal.fire({
+        icon: 'warning',
+        title: 'Oops...',
+        text: 'User Already Exists',
+
+      })
+      setShowModal(false)
+    }
+    if(userData.code == "CREATED"){
+      Swal.fire({
+        icon: 'success',
+        title: 'Woh...',
+        text: 'User Registered ',
+  
+      })
+      setShowModal(false)
+    }
    } catch (error) {
-    console.log(error)
+    Swal.fire({
+      icon: 'error',
+      title: 'Oops',
+      text: error,
+
+    })
    }
   };
   return (
@@ -81,7 +107,7 @@ const users = userInfo
                               name="companyId"
                               
                               type="text"
-                              disabled= {checkrole?.title =="superAdmin" ? false: true}
+                              disabled= {checkrole?.title =="superadmin" ? false: true}
                               placeholder="Enter your  Company ID"
                               className="w-full rounded-md border border-transparent py-2.5 px-6 text-base text-body-color placeholder-body-color shadow-one outline-none focus:border-primary focus-visible:shadow-none dark:bg-[#242B51] dark:shadow-signUp"
                             />

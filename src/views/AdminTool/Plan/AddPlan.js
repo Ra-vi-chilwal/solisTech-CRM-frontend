@@ -4,41 +4,58 @@ import * as Yup from "yup";
 import axios from "axios";
 import config from '../../../config'
 import { useSelector } from "react-redux";
-// import user from "../User/user";
+import Swal from 'sweetalert2'
 function AddPlan(props) {
+  var token = localStorage.getItem("token");
   const showModal = props && props.showModal;
   const setShowModal = props && props.setShowModal;
-  const { loading, userInfo, error } =
-  useSelector((store) => store.userInfo) || " ";
-  const checkrole = userInfo?.payload?.role?.[0] 
- 
-
-  const [selected, setSelected] = useState(null);
-const users = userInfo
+  const { loading, userInfo, error } = useSelector(store => store.userInfo);
+const companyId = userInfo?.payload?.company
   const initialValues = {
-    company:"" ,
-    email: "",
-    plan: "",
-    PurchasedOn:"",
-    companyLogo:"",
+    planName:"" ,
+    price: "",
+    Duration: "",
+    company :companyId
   };
 
   const validationSchema = Yup.object({
-    company: Yup.string().required("companyis required"),
-    email: Yup.string().required("email is required"),
-    plan: Yup.string().required("plan is required"),
-    PurchasedOn: Yup.string().required("PurchasedOn is required"),
-   
+    planName: Yup.string().required("plan Name is required"),
+    price: Yup.string().required("price is required"),
+    Duration: Yup.string().required("Duration is required"),
   });
   const onSubmit = async (values) => {
-    console.log(selected)
    try {
-    const response = await axios.post(`${config.API_URL}/company/add`,
-    {...values,companyLogo:selected});
+    const response = await axios.post(`${config.API_URL}/plan/add`,
+    {...values},{headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+   },});
     const userData = response.data;
-    console.log(userData)
+    if(userData.code == "DUPLICATEDATA"){
+      Swal.fire({
+        icon: 'warning',
+        title: 'Oops...',
+        text: 'User Already Exists',
+
+      })
+      setShowModal(false)
+    }
+    if(userData.code == "CREATED"){
+      Swal.fire({
+        icon: 'success',
+        title: 'Woh...',
+        text: 'User Registered ',
+  
+      })
+      setShowModal(false)
+    }
    } catch (error) {
-    console.log(error)
+    Swal.fire({
+      icon: 'error',
+      title: 'Oops',
+      text: error,
+
+    })
    }
   };
   return (
@@ -73,21 +90,19 @@ const users = userInfo
                         <div className="w-full px-4 md:w-1/2">
                           <div className="mb-8">
                             <label
-                              htmlFor="company"
+                              htmlFor="planName"
                               className="mb-3 block text-sm font-medium text-dark dark:text-white"
                             >
-                              Company Name
+                              Plan Name
                             </label>
                             <Field
-                              name="company"
-                              
+                              name="planName"
                               type="text"
-                              disabled= {checkrole?.title =="superAdmin" ? false: true}
-                              placeholder="Enter your  Company ID"
+                              placeholder="Enter your  plan Name "
                               className="w-full rounded-md border border-transparent py-2.5 px-6 text-base text-body-color placeholder-body-color shadow-one outline-none focus:border-primary focus-visible:shadow-none dark:bg-[#242B51] dark:shadow-signUp"
                             />
                             <ErrorMessage
-                              name="company"
+                              name="planName"
                               render={(msg) => (
                                 <small style={{ color: "red" }}>{msg}</small>
                               )}
@@ -97,19 +112,19 @@ const users = userInfo
                         <div className="w-full px-4 md:w-1/2">
                           <div className="mb-8">
                             <label
-                              htmlFor="email"
+                              htmlFor="price"
                               className="mb-3 block text-sm font-medium text-dark dark:text-white"
                             >
-                              Comapny Email
+                              Price ($)
                             </label>
                             <Field
-                              name="email"
-                              type="email"
+                              name="price"
+                              type="number"
                               placeholder="Enter your Title"
                               className="w-full rounded-md border border-transparent py-2.5 px-6 text-base text-body-color placeholder-body-color shadow-one outline-none focus:border-primary focus-visible:shadow-none dark:bg-[#242B51] dark:shadow-signUp"
                             />
                             <ErrorMessage
-                              name="email"
+                              name="price"
                               render={(msg) => (
                                 <small style={{ color: "red" }}>{msg}</small>
                               )}
@@ -122,47 +137,26 @@ const users = userInfo
                               htmlFor="plan"
                               className="mb-3 block text-sm font-medium text-dark dark:text-white"
                             >
-                              Plan
+                              Duration
                             </label>
                             <Field
-                             as="select"
-                              type="text"
-                              name="plan"
+                           
+                              type="number"
+                              name="Duration"
                              
-                              placeholder='Enter your Plan'
+                              placeholder='Enter your Duration'
                               className="w-full rounded-md border border-transparent py-2.5 px-6 text-base text-body-color placeholder-body-color shadow-one outline-none focus:border-primary focus-visible:shadow-none dark:bg-[#242B51] dark:shadow-signUp"
-                            >
-                              <option >--SELECT PLAN--</option>
-                              <option >ABC</option>
-                              <option >PQR</option>
-                              <option >XYZ</option>
-                              <option >RRR</option>
-                            </Field>
+                            />
+                         
                             <ErrorMessage
-                              name="plan"
+                              name="Duration"
                               render={(msg) => (
                                 <small style={{ color: "red" }}>{msg}</small>
                               )}
                             />
                           </div>
                         </div>
-                        <div className="w-full px-4 md:w-1/2">
-                          <div className="mb-8">
-                            <label
-                              htmlFor="PurchasedOn"
-                              className="mb-3 block text-sm font-medium text-dark dark:text-white "
-                            >
-                              PurchasedOn
-                            </label>
-                            <Field
-                              type="date"
-                              name="PurchasedOn"
-                             
-                              placeholder='PurchasedOn date'
-                              className="w-full rounded-md border border-transparent py-2.5 px-6 text-base text-body-color placeholder-body-color shadow-one outline-none focus:border-primary focus-visible:shadow-none dark:bg-[#242B51] dark:shadow-signUp"
-                            />
-                          </div>
-                        </div>
+                       
                         <div className="w-75 px-4">
                           <button
                             className="rounded-md py-2.5 px-9 text-base font-medium text-white transition duration-300 ease-in-out hover:bg-opacity-80 hover:shadow-signUp"

@@ -2,19 +2,25 @@ import React from 'react'
 import CIcon from '@coreui/icons-react'
 import {
   cilBell,
-  cilCalculator,
-  cilChartPie,
+  cilChartLine,
+  cilIndustry,
   cilGroup,
   cilBuilding,
   cilCouch,
   cilDescription,
-  cilDrop,
+  cibGoogle,
   cilUsb,
   cilUserPlus,
-  cilPencil,
+  cilHttps,
   cilPuzzle,
   cilSpeedometer,
-  cilStar,
+  cibLinkedinIn,
+  cibInstagram,
+  cibFacebook,
+  cibHackhands,
+  cibMyspace,
+  cibUpwork,
+  cibFlutter
 } from '@coreui/icons'
 import { CNavGroup, CNavItem, CNavTitle } from '@coreui/react'
 
@@ -38,80 +44,66 @@ const _nav = [
   },
   {
     component: CNavGroup,
-    name: 'Base',
-    to: '/base',
+    name: 'Source',
+    to: '/source',
     icon: <CIcon icon={cilPuzzle} customClassName="nav-icon" />,
     items: [
       {
         component: CNavItem,
-        name: 'Accordion',
-        to: '/base/accordion',
+        name: 'Websites',
+        icon: <CIcon icon={cilIndustry} customClassName="nav-icon" />,
+        to: '/source/website',
       },
       {
         component: CNavItem,
-        name: 'Breadcrumb',
-        to: '/base/breadcrumbs',
+        name: 'Facebook',
+        icon: <CIcon icon={cibFacebook
+        } customClassName="nav-icon" />,
+        to: '/source/facebook',
       },
       {
         component: CNavItem,
-        name: 'Cards',
-        to: '/base/cards',
+        name: 'Instagram',
+        icon: <CIcon icon={cibInstagram} customClassName="nav-icon" />,
+        to: '/source/instagram',
       },
       {
         component: CNavItem,
-        name: 'Carousel',
-        to: '/base/carousels',
+        name: 'Justdial',
+        icon: <CIcon icon={cibHackhands} customClassName="nav-icon" />,
+        to: '/source/justdial',
       },
       {
         component: CNavItem,
-        name: 'Collapse',
-        to: '/base/collapses',
+        name: 'Google Ads.',
+        icon: <CIcon icon={cibGoogle} customClassName="nav-icon" />,
+        to: '/source/google-ads',
       },
       {
         component: CNavItem,
-        name: 'List group',
-        to: '/base/list-groups',
+        name: 'Linkdin',
+        icon: <CIcon icon={cibLinkedinIn} customClassName="nav-icon" />,
+        to: '/source/linkdin',
       },
       {
         component: CNavItem,
-        name: 'Navs & Tabs',
-        to: '/base/navs',
+        name: 'Manual Data',
+        icon: <CIcon icon={cibMyspace} customClassName="nav-icon" />,
+        to: '/source/custom',
       },
       {
         component: CNavItem,
-        name: 'Pagination',
-        to: '/base/paginations',
+        name: 'Upwork',
+        icon: <CIcon icon={cibUpwork} customClassName="nav-icon" />,
+        to: '/source/custom',
       },
       {
         component: CNavItem,
-        name: 'Placeholders',
-        to: '/base/placeholders',
+        name: 'Fiverr',
+        icon: <CIcon icon={cibFlutter} customClassName="nav-icon" />,
+        to: '/source/custom',
       },
-      {
-        component: CNavItem,
-        name: 'Popovers',
-        to: '/base/popovers',
-      },
-      {
-        component: CNavItem,
-        name: 'Progress',
-        to: '/base/progress',
-      },
-      {
-        component: CNavItem,
-        name: 'Spinners',
-        to: '/base/spinners',
-      },
-      {
-        component: CNavItem,
-        name: 'Tables',
-        to: '/base/tables',
-      },
-      {
-        component: CNavItem,
-        name: 'Tooltips',
-        to: '/base/tooltips',
-      },
+
     ],
   },
 
@@ -154,7 +146,13 @@ const _nav = [
       },
     ],
   },
-
+  {
+    component: CNavItem,
+    name: 'Logout',
+    icon: <CIcon icon={cilHttps
+    } customClassName="nav-icon" />,
+    to: '/auth/login',
+  },
   {
     component: CNavTitle,
     name: 'Extras',

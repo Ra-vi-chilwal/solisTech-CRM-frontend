@@ -5,6 +5,7 @@ const Role = React.lazy(() => import('../../views/AdminTool/Role'))
 const Plan = React.lazy(() => import('../../views/AdminTool/Plan'))
 const Company = React.lazy(() => import('../../views/AdminTool/Company'))
 const User = React.lazy(() => import('../../views/AdminTool/User'))
+const Custom = React.lazy(() => import('../../views/Source/ManualData'))
 const MainRoutes = {
 path:"/",
 element:<DefaultLayout/>,
@@ -35,6 +36,55 @@ children:[
             path: 'admin-tool/company',
             permissions: [{ label: "Read", value: "read" }],
             element: <Company />
+        
+    },
+    {
+        
+            path: 'admin-tool/role',
+            permissions: [{ label: "Read", value: "read" }],
+            element: <Role />
+        
+    },
+    {
+        
+            path: 'source/custom',
+            permissions: [{ label: "Read", value: "read" }],
+            element: <Custom />
+        
+    },
+    {
+        
+            path: 'admin-tool/role',
+            permissions: [{ label: "Read", value: "read" }],
+            element: <Role />
+        
+    },
+    {
+        
+            path: 'admin-tool/role',
+            permissions: [{ label: "Read", value: "read" }],
+            element: <Role />
+        
+    },
+    {
+        
+            path: 'admin-tool/role',
+            permissions: [{ label: "Read", value: "read" }],
+            element: <Role />
+        
+    },
+    {
+        
+            path: 'admin-tool/role',
+            permissions: [{ label: "Read", value: "read" }],
+            element: <Role />
+        
+    },
+    {
+        
+            path: 'admin-tool/role',
+            permissions: [{ label: "Read", value: "read" }],
+            element: <Role />
         
     },
     {

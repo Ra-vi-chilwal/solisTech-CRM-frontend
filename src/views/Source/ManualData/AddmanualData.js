@@ -1,61 +1,76 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import Select from "react-select";
 import * as Yup from "yup";
 import axios from "axios";
-import config from '../../../config'
-import { useDispatch, useSelector } from "react-redux";
-import { fetchPlan } from "../../../redux/action/plan/plan";
+import config from "../../../config";
+import { useSelector } from "react-redux";
 import Swal from 'sweetalert2'
-function AddRole(props) {
+// import user from "../User/user";
+function AddmanualData(props) {
   var token = localStorage.getItem("token");
-  const [durations, setDuration] = useState({})
   const showModal = props && props.showModal;
   const setShowModal = props && props.setShowModal;
+  const {  companyInfo } = useSelector((store) => store) || " ";
+  const company = companyInfo?.userInfo?.data
   const { loading, userInfo, error } =
     useSelector((store) => store.userInfo) || " ";
-  const checkrole = userInfo?.payload?.role?.[0]
-  const [selected, setSelected] = useState(null);
-  const dispatch = useDispatch()
-  useEffect(() => {
-    dispatch(fetchPlan(token));
-  }, [])
-  const { planInfo } = useSelector((store) => store) || " ";
-  const plan = planInfo?.userInfo?.data;
+    const {  userApi } =
+    useSelector((store) => store) || " ";
+//role
+const {RoleData} =
+useSelector((store) => store) || " ";
+const role = RoleData?.userInfo?.data;
   const initialValues = {
-    company: "",
+    leadOwner: "",
+    lastName: "",
+    firstName: "",
     email: "",
-    plan: '',
-    PurchasedOn: "",
-    companyLogo: "",
-    expireOn: ""
+    phone:"",
+    leadStatus:"",
+    leadSource:"",
+    readytoRunBusiness:"",
+    servicesEnquired:"",
+    whatisyourbudget:"",
+    layout:"",
+    enquiredFor:"",
+    date:"",
+    time:"",
+    firstFollowUp:"",
   };
-  console.log(initialValues, 'initial value')
-  const validationSchema = Yup.object({
-    company: Yup.string().required("company is required"),
-    email: Yup.string().required("email is required"),
-    plan: Yup.string().required("plan is required"),
-    PurchasedOn: Yup.string().required("PurchasedOn is required"),
 
+  const validationSchema = Yup.object({
+    firstName: Yup.string().required("First Name is required"),
+    lastName: Yup.string().required("Last Name is required"),
+    password: Yup.string()
+      .required()
+      .min(6, "Password is too short -should be 6 chars minimum"),
+    gender: Yup.string().required("Gender is required"),
+    email: Yup.string().required("Email is required"),
+    lastName: Yup.string().required("Last Name is required"),
+    role: Yup.string().required("Role is required"),
+    company:Yup.string().required("Role is required"),
   });
   const onSubmit = async (values) => {
-
     try {
-      const response = await axios.post(`${config.API_URL}/company/add`,
-        { ...values, companyLogo: selected }, {
+      const response = await axios.post(`${config.API_URL}/auth/register`, {
+       ...values
+        
+      },{
         headers: {
           Authorization: `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data', // Set the content type for file upload
+          "Content-Type": "application/json", // Set the content type for file upload
           // Add any other headers you need
         }
       });
       const userData = response.data;
+      console.log(response)
       if(userData.code == "DUPLICATEDATA"){
         Swal.fire({
           icon: 'warning',
           title: 'Oops...',
           text: 'User Already Exists',
-  
+
         })
         setShowModal(false)
       }
@@ -75,6 +90,7 @@ function AddRole(props) {
         text: error,
   
       })
+      setShowModal(false)
     }
   };
   return (
@@ -85,7 +101,7 @@ function AddRole(props) {
           <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-75 bg-white outline-none focus:outline-none">
             {/*header*/}
             <div className="flex items-start justify-between p-3 border-b border-solid border-slate-200 rounded-t">
-              <h3 className="text-xl ">Add Company</h3>
+              <h3 className="text-xl ">Add User</h3>
               <button
                 className="p-1 ml-auto bg-transparent border-0 text-black opacity-5 float-right text-3xl leading-none  outline-none focus:outline-none"
                 onClick={() => setShowModal(false)}
@@ -102,11 +118,7 @@ function AddRole(props) {
               onSubmit={onSubmit}
             >
               {({ values, setFieldValue, errors, dirty, isValid }) => {
-                console.log(values)
-                const selectedDate = new Date(values?.PurchasedOn);
-                const futureDate = new Date(selectedDate.getTime() + 365 * 24 * 60 * 60 * 1000);
                 
-                const formattedDate = `${futureDate.getDate().toString().padStart(2, "0")}-${(futureDate.getMonth() + 1).toString().padStart(2, "0")}-${futureDate.getFullYear().toString().padStart(4, "0")}`;
                 return (
                   <Form>
                     <div className="relative p-6 flex-auto">
@@ -114,20 +126,41 @@ function AddRole(props) {
                         <div className="w-full px-4 md:w-1/2">
                           <div className="mb-8">
                             <label
-                              htmlFor="company"
+                              htmlFor="name"
                               className="mb-3 block text-sm font-medium text-dark dark:text-white"
                             >
-                              Company Name
+                              Lead Owner
                             </label>
                             <Field
-                              name="company"
+                              name="firstName"
                               type="text"
-                             
-                              placeholder="Enter your  Company Name"
+                              placeholder="Enter your  First Name"
                               className="w-full rounded-md border border-transparent py-2.5 px-6 text-base text-body-color placeholder-body-color shadow-one outline-none focus:border-primary focus-visible:shadow-none dark:bg-[#242B51] dark:shadow-signUp"
                             />
                             <ErrorMessage
-                              name="company"
+                              name="firstName"
+                              render={(msg) => (
+                                <small style={{ color: "red" }}>{msg}</small>
+                              )}
+                            />
+                          </div>
+                        </div>
+                        <div className="w-full px-4 md:w-1/2">
+                          <div className="mb-8">
+                            <label
+                              htmlFor="lastName"
+                              className="mb-3 block text-sm font-medium text-dark dark:text-white"
+                            >
+                              lastName
+                            </label>
+                            <Field
+                              name="lastName"
+                              type="text"
+                              placeholder="Enter your  Last Name"
+                              className="w-full rounded-md border border-transparent py-2.5 px-6 text-base text-body-color placeholder-body-color shadow-one outline-none focus:border-primary focus-visible:shadow-none dark:bg-[#242B51] dark:shadow-signUp"
+                            />
+                            <ErrorMessage
+                              name="lastName"
                               render={(msg) => (
                                 <small style={{ color: "red" }}>{msg}</small>
                               )}
@@ -140,16 +173,101 @@ function AddRole(props) {
                               htmlFor="email"
                               className="mb-3 block text-sm font-medium text-dark dark:text-white"
                             >
-                              company Email
+                              Email
                             </label>
                             <Field
                               name="email"
                               type="email"
-                              placeholder="Enter Company Email"
+                              placeholder="Enter your Email"
                               className="w-full rounded-md border border-transparent py-2.5 px-6 text-base text-body-color placeholder-body-color shadow-one outline-none focus:border-primary focus-visible:shadow-none dark:bg-[#242B51] dark:shadow-signUp"
                             />
                             <ErrorMessage
                               name="email"
+                              render={(msg) => (
+                                <small style={{ color: "red" }}>{msg}</small>
+                              )}
+                            />
+                          </div>
+                        </div>
+                        <div className="w-full px-4 md:w-1/2">
+                          <div className="mb-8">
+                            <label
+                              htmlFor="password"
+                              className="mb-3 block text-sm font-medium text-dark dark:text-white"
+                            >
+                              password
+                            </label>
+                            <Field
+                              type="password"
+                              name="password"
+                              placeholder="Enter your password"
+                              className="w-full rounded-md border border-transparent py-2.5 px-6 text-base text-body-color placeholder-body-color shadow-one outline-none focus:border-primary focus-visible:shadow-none dark:bg-[#242B51] dark:shadow-signUp"
+                            />
+                            <ErrorMessage
+                              name="password"
+                              render={(msg) => (
+                                <small style={{ color: "red" }}>{msg}</small>
+                              )}
+                            />
+                          </div>
+                        </div>
+                        <div className="w-full px-4 md:w-1/2">
+                          <div className="mb-8">
+                            <label
+                              htmlFor="gender"
+                              className="mb-3 block text-sm font-medium text-dark dark:text-white"
+                            >
+                              Gender
+                            </label>
+                            <Field
+                              as="select"
+                              type="text"
+                              name="gender"
+                              placeholder="Enter your Plan"
+                              className="w-full rounded-md border border-transparent py-2.5 px-6 text-base 
+                              text-body-color placeholder-body-color shadow-one outline-none focus:border-primary 
+                              focus-visible:shadow-none dark:bg-[#242B51] dark:shadow-signUp"
+                            >
+                              <option>--SELECT GENDER--</option>
+                              <option value="male">MALE</option>;
+                              <option value="female">FEMALE</option>
+                              <option value="other">OTHER</option>
+                            </Field>
+                            <ErrorMessage
+                              name="gender"
+                              render={(msg) => (
+                                <small style={{ color: "red" }}>{msg}</small>
+                              )}
+                            />
+                          </div>
+                        </div>
+                        <div className="w-full px-4 md:w-1/2">
+                          <div className="mb-8">
+                            <label
+                              htmlFor="company"
+                              className="mb-3 block text-sm font-medium text-dark dark:text-white"
+                            >
+                              Company
+                            </label>
+                            <Field
+                              as="select"
+                              type="text"
+                              name="company"
+                              placeholder="Enter your Company"
+                              className="w-full rounded-md border border-transparent py-2.5 px-6 text-base 
+                              text-body-color placeholder-body-color shadow-one outline-none focus:border-primary 
+                              focus-visible:shadow-none dark:bg-[#242B51] dark:shadow-signUp"
+                            >
+                              <option>--SELECT COMPANY--</option>
+                             {company?.map((ele)=>{
+                              return(
+
+                                <option key={ele._id} value={ele._id}>{ele.company}</option>
+                              )
+                             })} 
+                            </Field>
+                            <ErrorMessage
+                              name="company"
                               render={(msg) => (
                                 <small style={{ color: "red" }}>{msg}</small>
                               )}
@@ -162,122 +280,26 @@ function AddRole(props) {
                               htmlFor="plan"
                               className="mb-3 block text-sm font-medium text-dark dark:text-white"
                             >
-                              Plan
+                              Role
                             </label>
                             <Field
                               as="select"
                               type="text"
-                              name="plan"
-
-                              placeholder='Enter your Plan'
+                              name="role"
+                              placeholder="Enter your Plan"
                               className="w-full rounded-md border border-transparent py-2.5 px-6 text-base 
                               text-body-color placeholder-body-color shadow-one outline-none focus:border-primary 
                               focus-visible:shadow-none dark:bg-[#242B51] dark:shadow-signUp"
                             >
-                              <option >--SELECT PLAN--</option>
-
-                              {plan && plan.map((item) => {
-
-                                return (
-
-                                  <option key={item._id} value={item._id} >{item.planName}</option>
-
-                                )
-                              })}
-
-
+                              <option>--SELECT ROLE--</option>
+                           {role?.map((ele)=>{
+                            return(
+                              <option key={ele._id} value={ele._id}>{ele.title}</option>
+                            )
+                           })}
                             </Field>
                             <ErrorMessage
-                              name="plan"
-                              render={(msg) => (
-                                <small style={{ color: "red" }}>{msg}</small>
-                              )}
-                            />
-                          </div>
-                        </div>
-                        <div className="w-full px-4 md:w-1/2">
-                          <div className="mb-8">
-                            <label
-                              htmlFor="PurchasedOn"
-                              className="mb-3 block text-sm font-medium text-dark dark:text-white "
-                            >
-                              PurchasedOn
-                            </label>
-                            <Field
-                              type="date"
-                              name="PurchasedOn"
-                              onChange={(e) => {
-                                const expireOn = e.target.value
-                                setFieldValue("PurchasedOn", e.target.value);
-                                setFieldValue(
-                                  "expireOn",
-                                  new Date(
-                                    new Date(expireOn).getTime() +
-                                    365 * 24 * 60 * 60 * 1000
-                                  ).toISOString()
-                                  .toString()
-                                  .substring(0, 10)
-                                );
-                              }}
-
-                              placeholder='PurchasedOn date'
-                              className="w-full rounded-md
-                               border border-transparent py-2.5 px-6 text-base text-body-color placeholder-body-color shadow-one outline-none focus:border-primary focus-visible:shadow-none dark:bg-[#242B51] dark:shadow-signUp"
-                            />
-                          </div>
-                        </div>
-                        <div className="w-full px-4 md:w-1/2">
-                          <div className="mb-8">
-                            <label
-                              htmlFor="PurchasedOn"
-                              className="mb-3 block text-sm font-medium text-dark dark:text-white "
-                            >
-                              ExpireOn
-                            </label>
-                            <Field
-                              type="text"
-                              name="expireOn"
-                              value={formattedDate}
-                              defaultValue='dk'
-                              disabled={true}
-                              placeholder={formattedDate}
-                              style={{ background: "#3a353d3d" }}
-                              className="w-full rounded-md border border-transparent py-2.5 px-6 text-base text-body-color placeholder-body-color shadow-one outline-none focus:border-primary focus-visible:shadow-none dark:bg-[#242B51] dark:shadow-signUp"
-                            />
-                          </div>
-                        </div>
-                        <div className="w-full px-4 md:w-1/2">
-                          <div className="mb-8">
-                            <label
-                              htmlFor="companyLogo"
-                              className="mb-3 block text-sm font-medium text-dark dark:text-white "
-                            >
-                              Company Logo
-                            </label>
-                            <Field
-                              id="pdfFile"
-                              type="file"
-                              name="pdfFile"
-                              className="form-control pt-1"
-                              onChange={(e, element, param) => {
-                                if ((element = e.target.files[0])) {
-                                  setSelected(element);
-                                } else {
-                                  Swal.fire({
-                                    icon: "warning",
-                                    title: "Error",
-                                    text: "Something went wrong",
-                                    focusConfirm: true,
-                                    toast: true,
-                                    width: "450px",
-                                  }).then(function () {
-                                    navigate(0);
-                                  });
-                                }
-                              }}
-                            />
-                            <ErrorMessage
-                              name="companyLogo"
+                              name="role"
                               render={(msg) => (
                                 <small style={{ color: "red" }}>{msg}</small>
                               )}
@@ -310,4 +332,4 @@ function AddRole(props) {
   );
 }
 
-export default AddRole;
+export default AddmanualData;

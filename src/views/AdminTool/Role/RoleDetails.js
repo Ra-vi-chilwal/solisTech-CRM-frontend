@@ -8,10 +8,7 @@ import config from "../../../config";
 import {fetchRole} from "../../../redux/action/role/role"
 function RoleDetails() {
 
-    const dispatch = useDispatch()
-    useEffect(() => {
-        dispatch(fetchRole());
-    }, [])
+ 
     const { loading, RoleData, error } =
     useSelector((store) => store) || " ";
 const role = RoleData?.userInfo?.data;
