@@ -30,7 +30,6 @@ function AddRole(props) {
     companyLogo: "",
     expireOn: ""
   };
-  console.log(initialValues, 'initial value')
   const validationSchema = Yup.object({
     company: Yup.string().required("company is required"),
     email: Yup.string().required("email is required"),
@@ -39,7 +38,6 @@ function AddRole(props) {
 
   });
   const onSubmit = async (values) => {
-
     try {
       const response = await axios.post(`${config.API_URL}/company/add`,
         { ...values, companyLogo: selected }, {

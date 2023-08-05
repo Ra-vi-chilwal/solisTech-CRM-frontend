@@ -3,13 +3,14 @@ import AddmanualData from "./AddmanualData";
 import ManualdataDetails from "./ManualdataDetails";
 import { useDispatch } from "react-redux";
 import { fetchUserApi } from "../../../redux/action/UserApi/UserApi";
-
+import {fetchLeadSource} from "../../../redux/action/LeadSource/LeadSource"
 export default function Modal() {
   var token = localStorage.getItem("token");
   const [showModal, setShowModal] = React.useState(false);
   const dispatch = useDispatch()
   useEffect(() => {
       dispatch(fetchUserApi(token));
+      dispatch(fetchLeadSource(token))
   }, [])
   return (
     <>

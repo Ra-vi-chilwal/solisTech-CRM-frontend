@@ -2285,5 +2285,28 @@ $enable-rtl: true;
     border-radius: 5px;
     margin-top: -6px;
   }
+  .accordion-button:focus {
+       box-shadow: none !important
+  }
+.short-name{
+  /* From https://css.glass */
+/* From https://css.glass */
+background-image: linear-gradient(rgb(153 60 215), rgb(192 76 168));
+border-radius: 7px;
+box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+backdrop-filter: blur(5px);
+-webkit-backdrop-filter: blur(5px);
+border: 1px solid rgba(192, 186, 186, 0.82);
+color: #EBEDEF;
+}
+.table > :not(caption) > * > * {
+  border-bottom-width: 0px !important;
+}
+.icons-eer::before {
+  content: "\f57b";
+  font-size: 21px;
+  font-weight: 600;
+}
+
   
   

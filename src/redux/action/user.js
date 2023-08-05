@@ -6,6 +6,7 @@ import {
 } from "../constant/user";
 import axios from "axios";
 import config from "../../config";
+import Swal from 'sweetalert2'
 const fetchUserInfo = (values) => {
   return async (dispatch) => {
     try {
@@ -15,12 +16,35 @@ const fetchUserInfo = (values) => {
       if (userInfo.code === "FETCHED" && userInfo !== null) {
         localStorage.setItem("token", userInfo.token);
         dispatch({ type: USER_INFO_SUCCESS, payload: userInfo });
+          Swal.fire({
+            icon: 'success',
+            title: 'Woh...',
+            text: 'User login ',
+      
+          })
+       
+        
       } else {
         dispatch({ type: USER_INFO_FAIL, payload: "Invalid user info" });
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: userInfo.data,
+    
+        })
+     
+      
       }
     } catch (err) {
-      console.log(err);
+     
       dispatch({ type: USER_INFO_FAIL, payload: err.message });
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text:  err.message ,
+  
+      })
+      
     }
   };
 };

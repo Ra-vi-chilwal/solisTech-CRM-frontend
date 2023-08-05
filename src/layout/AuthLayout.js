@@ -3,7 +3,7 @@ import Login from '../views/pages/login/Login'
 
 function AuthLayout() {
   return (
-    <div>AuthLayout
+    <div>
         <Login/>
     </div>
   )
