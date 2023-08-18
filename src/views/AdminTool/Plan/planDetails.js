@@ -14,7 +14,7 @@ function planDetails() {
     }, [])
     const { loading, planInfo, error } =
     useSelector((store) => store) || " ";
-    console.log(planInfo)
+
 const role = planInfo?.userInfo?.data;
 
     const columns = [

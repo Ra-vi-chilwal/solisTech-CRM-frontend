@@ -1,18 +1,29 @@
-import React, { useState } from "react";
-import { ErrorMessage, Field, Form, Formik } from "formik";
+import React, { useEffect, useState } from "react";
+import { ErrorMessage, Field, FieldArray, Form, Formik } from "formik";
 import Select from "react-select";
 import * as Yup from "yup";
 import axios from "axios";
 import config from "../../../config";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Swal from "sweetalert2";
-function AddLead(props) {
+import { useLocation } from "react-router-dom";
+import { fetchUserApi } from "../../../redux/action/UserApi/UserApi";
+// import user from "../User/user";
+function UpdateLead(props) {
+  const dispatch = useDispatch()
+  useEffect(() => {
+    dispatch(fetchUserApi(token));
+  }, [])
   var token = localStorage.getItem("token");
+  const location = useLocation();
+  const receivedData = location && location.state;
+  console.log(receivedData._id)
   const showModal = props && props.showModal;
   const setShowModal = props && props.setShowModal;
   const { companyInfo } = useSelector((store) => store) || " ";
   const company = companyInfo?.userInfo?.data;
   const { loading, userInfo, error } = useSelector((store) => store.userInfo) || " ";
+
   const companyData = userInfo?.payload?.company
   const { userApi } = useSelector((store) => store) || " ";
   const userDetails = userApi?.userInfo?.data;
@@ -20,35 +31,40 @@ function AddLead(props) {
   const filterUser = userDetails && userDetails.filter((ele) => {
     return ele.company._id === companyId;
   });
+  console.log(receivedData.assignedUser)
   //role
   const { RoleData } = useSelector((store) => store) || " ";
   const role = RoleData?.userInfo?.data;
+  const userRole = userInfo && userInfo.payload && userInfo.payload && userInfo.payload.role && userInfo.payload.role && userInfo.payload.role[0].title;
+  const id = receivedData && receivedData._id;
   const initialValues = {
-    leadOwner: "",
-    lastName: "",
-    firstName: "",
-    email: "",
-    phone: "",
-    leadStatus: "",
-    leadSource: "",
-    whatisyourbudget: "",
-    date: "",
-    time: "",
-    state: "",
-    city: "",
-    country: "",
-    description: "",
-    assignedManager: "",
-    alternateManager: "",
+    leadOwner: receivedData && receivedData.leadOwner || "",
+    lastName: receivedData && receivedData.lastName || "",
+    firstName: receivedData && receivedData.firstName || "",
+    email: receivedData && receivedData.email || "",
+    phone: receivedData && receivedData.phone || "",
+    leadStatus: receivedData && receivedData.leadStatus || "",
+    leadSource: receivedData && receivedData.leadSource || "",
+    whatisyourbudget: receivedData && receivedData.whatisyourbudget || "",
+    date: receivedData && receivedData.date || "",
+    time: receivedData && receivedData.time || "",
+    state: receivedData && receivedData.state || "",
+    city: receivedData && receivedData.city || "",
+    country: receivedData && receivedData.country || "",
+    description: receivedData && receivedData.description || "",
+    assignedManager: receivedData && receivedData.assignedUser && receivedData.assignedUser[0] && receivedData.assignedUser[0].id || "",
+    alternateManager: receivedData && receivedData.assignedUser && receivedData.assignedUser[1] && receivedData.assignedUser[1].id || "",
+    assignedLead: receivedData && receivedData.assignedUser && receivedData.assignedUser[2] && receivedData.assignedUser[2].id || "",
+    alternateLead: receivedData && receivedData.assignedUser && receivedData.assignedUser[3] && receivedData.assignedUser[3].id || "",
+    reminderCall: receivedData && receivedData.reminderCall && receivedData.reminderCall.substring(0, 16) || "",
     company: companyData
   };
-
   const validationSchema = Yup.object({
     leadOwner: Yup.string().required("Lead Owner is required"),
     lastName: Yup.string().required("Last Name is required"),
     firstName: Yup.string().required("First Name is required"),
     email: Yup.string().required("Email is required"),
-    phone: Yup.string().required("Phone is required"),
+    phone: Yup.string().required("Last Name is required"),
     leadStatus: Yup.string().required("Lead Status is required"),
     leadSource: Yup.string().required("Lead Source is required"),
     state: Yup.string().required("State is required"),
@@ -61,7 +77,8 @@ function AddLead(props) {
 
   const onSubmit = async (values) => {
     try {
-      const response = await axios.post(`${config.API_URL}/leadSource/add`, {
+
+      const response = await axios.post(`${config.API_URL}/leadSource/update/${id}`, {
         ...values, assignedUser: [{
           "id": values.assignedManager,
           "managerstatus": true,
@@ -71,7 +88,18 @@ function AddLead(props) {
           "id": values.alternateManager,
           "managerstatus": false,
           "key": "M2"
-        }]
+        },
+        {
+          "id": values.assignedLead,
+          "leadstatus": true,
+          "key": "L1"
+        },
+        {
+          "id": values.alternateLead,
+          "leadstatus": false,
+          "key": "L2"
+        },
+        ]
       },
         {
           headers: {
@@ -82,30 +110,22 @@ function AddLead(props) {
         }
       );
       const userData = response.data;
-console.log(userData)
+      console.log(userData)
       if (userData.code == "DUPLICATEDATA") {
         Swal.fire({
           icon: "warning",
           title: "Oops...",
           text: "User Already Exists",
         });
-        setShowModal(false);
+
       }
-      else if (userData.code == "SUCCESS") {
+      if (userData.code == "UPDATED") {
         Swal.fire({
           icon: "success",
           title: "Woh...",
-          text: "Lead Registered ",
+          text: "Lead Updated ",
         });
-        setShowModal(false);
-      }
-      else if (userData.code == "ERROROCCURED") {
-        Swal.fire({
-          icon: "error",
-          title: "Oops",
-          text: error,
-        });
-        setShowModal(false);
+
       }
     } catch (error) {
       console.log(error)
@@ -114,7 +134,7 @@ console.log(userData)
         title: "Oops",
         text: error,
       });
-      setShowModal(false);
+
     }
   };
   return (
@@ -129,38 +149,19 @@ console.log(userData)
             </h3>
             {/*body*/}
             <Formik
+              enableReinitialize={true}
               initialValues={initialValues}
               validationSchema={validationSchema}
               onSubmit={onSubmit}
+              // initialValues={{ friends: ['jared', 'ian', 'brent'] }}
             >
               {({ values, setFieldValue, errors, dirty, isValid }) => {
-
+                console.log(values)
                 return (
                   <Form>
                     <div className="relative p-6 flex-auto">
                       <div className="-mx-4 flex flex-wrap">
-                        <div className="w-full px-4 md:w-1/2">
-                          <div className="mb-8">
-                            <label
-                              htmlFor="name"
-                              className="mb-3 block text-sm font-medium text-dark dark:text-white"
-                            >
-                              Lead Owner
-                            </label>
-                            <Field
-                              name="leadOwner"
-                              type="text"
-                              placeholder="Enter your  Lead Owner Name"
-                              className="w-full rounded-md border border-transparent py-2.5 px-6 text-base text-body-color placeholder-body-color shadow-one outline-none focus:border-primary focus-visible:shadow-none dark:bg-[#242B51] dark:shadow-signUp"
-                            />
-                            <ErrorMessage
-                              name="leadOwner"
-                              render={(msg) => (
-                                <small style={{ color: "red" }}>{msg}</small>
-                              )}
-                            />
-                          </div>
-                        </div>
+
                         <div className="w-full px-4 md:w-1/2">
                           <div className="mb-8">
                             <label
@@ -249,100 +250,6 @@ console.log(userData)
                             />
                           </div>
                         </div>
-                        <div className="w-full px-4 md:w-1/2">
-                          <div className="mb-8">
-                            <label
-                              htmlFor="whatisyourbudget"
-                              className="mb-3 block text-sm font-medium text-dark dark:text-white"
-                            >
-                              What is Your Budget
-                            </label>
-                            <Field
-                              type="text"
-                              name="whatisyourbudget"
-                              placeholder="Enter your Your Budget"
-                              className="w-full rounded-md border border-transparent py-2.5 px-6 text-base 
-                              text-body-color placeholder-body-color shadow-one outline-none focus:border-primary 
-                              focus-visible:shadow-none dark:bg-[#242B51] dark:shadow-signUp"
-                            />
-
-                            <ErrorMessage
-                              name="whatisyourbudget"
-                              render={(msg) => (
-                                <small style={{ color: "red" }}>{msg}</small>
-                              )}
-                            />
-                          </div>
-                        </div>
-
-                      
-                        <div className="w-full px-4 md:w-1/2">
-                          <div className="mb-8">
-                            <label
-                              htmlFor="assignedManager"
-                              className="mb-3 block text-sm font-medium text-dark dark:text-white"
-                            >
-                              Assigned Manager
-                            </label>
-                            <Field
-                              as="select"
-                              type="text"
-                              name="assignedManager"
-                              placeholder="Enter your lead Source"
-                              className="w-full rounded-md border border-transparent py-2.5 px-6 text-base 
-                              text-body-color placeholder-body-color shadow-one outline-none focus:border-primary 
-                              focus-visible:shadow-none dark:bg-[#242B51] dark:shadow-signUp"
-                            >
-                              <option>--SELECT ASSIGNED MANAGER--</option>
-                              {filterUser && filterUser.filter(item => item && item.role && item.role.slug == "manager").map((ele) => {
-                             
-                               return (
-                                  <>
-                                    <option value={ele._id}>{(ele.firstName).charAt(0).toUpperCase() + ele.firstName.slice(1)} {(ele.lastName).charAt(0).toUpperCase() + ele.lastName.slice(1)}</option>
-                                  </>
-                                )
-                              })}
-                            </Field>
-
-                            <ErrorMessage
-                              name="assignedManager"
-                              render={(msg) => (
-                                <small style={{ color: "red" }}>{msg}</small>
-                              )}
-                            />
-                          </div>
-                        </div>
-                        <div className="w-full px-4 md:w-1/2">
-                          <div className="mb-8">
-                            <label
-                              htmlFor="alternateManager"
-                              className="mb-3 block text-sm font-medium text-dark dark:text-white"
-                            >
-                              Alternate Assigned Manager
-                            </label>
-                            <Field
-                              as="select"
-                              type="text"
-                              name="alternateManager"
-                              style={{ background: values.assignedManager == "" || null ? "#d8caca" : "" }}
-                              disabled={values.assignedManager == "" || null}
-                              placeholder="Enter your lead Source"
-                              className="w-full rounded-md border border-transparent py-2.5 px-6 text-base 
-                              text-body-color placeholder-body-color shadow-one outline-none focus:border-primary 
-                              focus-visible:shadow-none dark:bg-[#242B51] dark:shadow-signUp"
-                            >
-                              <option>--SELECT ALTERNATE ASSIGNED MANAGER--</option>
-                              {filterUser && filterUser.filter(item => (item && item.role && item.role.slug == "manager") && values.assignedManager !==item._id).map((ele) => {
-                                return (
-                                  <>
-                                    <option value={ele._id}>{(ele.firstName).charAt(0).toUpperCase() + ele.firstName.slice(1)} {(ele.lastName).charAt(0).toUpperCase() + ele.lastName.slice(1)}</option>
-                                  </>
-                                )
-                              })}
-                            </Field>
-                          </div>
-                        </div>
-
                         <div className="w-full px-4 md:w-1/2">
                           <div className="mb-8">
                             <label
@@ -440,9 +347,197 @@ console.log(userData)
                             />
                           </div>
                         </div>
-                       
-                      
-                      
+                        {/* Leads */}
+                        <div className="w-full px-4 md:w-1/2">
+                          <div className="mb-8">
+                            <label
+                              htmlFor="assignedManager"
+                              className="mb-3 block text-sm font-medium text-dark dark:text-white"
+                            >
+                              Assigned Manager
+                            </label>
+                            <Field
+                              as="select"
+                              type="text"
+                              name="assignedManager"
+                              placeholder="Enter your lead Source"
+                              className="w-full rounded-md border border-transparent py-2.5 px-6 text-base 
+                              text-body-color placeholder-body-color shadow-one outline-none focus:border-primary 
+                              focus-visible:shadow-none dark:bg-[#242B51] dark:shadow-signUp"
+                            >
+                              <option>--SELECT ASSIGNED MANAGER--</option>
+                              {filterUser && filterUser.filter(item => item && item.role && item.role.slug == "manager").map((ele) => {
+
+                                return (
+                                  <>
+                                    <option value={ele._id}>{(ele.firstName).charAt(0).toUpperCase() + ele.firstName.slice(1)} {(ele.lastName).charAt(0).toUpperCase() + ele.lastName.slice(1)}</option>
+                                  </>
+                                )
+                              })}
+                            </Field>
+
+                            <ErrorMessage
+                              name="assignedManager"
+                              render={(msg) => (
+                                <small style={{ color: "red" }}>{msg}</small>
+                              )}
+                            />
+                          </div>
+                        </div>
+                        <div className="w-full px-4 md:w-1/2">
+                          <div className="mb-8">
+                            <label
+                              htmlFor="alternateManager"
+                              className="mb-3 block text-sm font-medium text-dark dark:text-white"
+                            >
+                              Alternate Assigned Manager
+                            </label>
+                            <Field
+                              as="select"
+                              type="text"
+                              name="alternateManager"
+                              style={{ background: values.assignedManager == "" || null ? "#d8caca" : "" }}
+                              disabled={values.assignedManager == "" || null}
+                              placeholder="Enter your lead Source"
+                              className="w-full rounded-md border border-transparent py-2.5 px-6 text-base 
+                              text-body-color placeholder-body-color shadow-one outline-none focus:border-primary 
+                              focus-visible:shadow-none dark:bg-[#242B51] dark:shadow-signUp"
+                            >
+                              <option>--SELECT ALTERNATE ASSIGNED MANAGER--</option>
+                              {filterUser && filterUser.filter(item => (item && item.role && item.role.slug == "manager") && values.assignedManager !== item._id).map((ele) => {
+                                return (
+                                  <>
+                                    <option value={ele._id}>{(ele.firstName).charAt(0).toUpperCase() + ele.firstName.slice(1)} {(ele.lastName).charAt(0).toUpperCase() + ele.lastName.slice(1)}</option>
+                                  </>
+                                )
+                              })}
+                            </Field>
+                          </div>
+                        </div>
+                        <div className="w-full px-4 md:w-1/2">
+                          <div className="mb-8">
+                            <label
+                              htmlFor="assignedLead"
+                              className="mb-3 block text-sm font-medium text-dark dark:text-white"
+                            >
+                              Assigned Lead
+                            </label>
+                            <Field
+                              as="select"
+                              type="text"
+
+                              name="assignedLead"
+                              placeholder="Enter your lead Source"
+                              className="w-full rounded-md border border-transparent py-2.5 px-6 text-base 
+                              text-body-color placeholder-body-color shadow-one outline-none focus:border-primary 
+                              focus-visible:shadow-none dark:bg-[#242B51] dark:shadow-signUp"
+                            >
+                              <option value={""}>--SELECT ASSIGNED LEAD--</option>
+                              {filterUser && filterUser.filter(item => item && item.role && item.role.slug == "lead").map((ele) => {
+                                return (
+                                  <>
+                                    <option
+                                      value={ele._id}>{(ele.firstName).charAt(0).toUpperCase() + ele.firstName.slice(1)} {(ele.lastName).charAt(0).toUpperCase() + ele.lastName.slice(1)}</option>
+                                  </>
+                                )
+                              })}
+                            </Field>
+
+                            <ErrorMessage
+                              name="assignedLead"
+                              render={(msg) => (
+                                <small style={{ color: "red" }}>{msg}</small>
+                              )}
+                            />
+                          </div>
+                        </div>
+                        <div className="w-full px-4 md:w-1/2">
+                          <div className="mb-8">
+                            <label
+                              htmlFor="alternateLead"
+                              className="mb-3 block text-sm font-medium text-dark dark:text-white"
+                            >
+                              Alternate Assigned Lead
+                            </label>
+                            <Field
+                              as="select"
+                              type="text"
+                              style={{ background: values.assignedLead == "" || null ? "#d8caca" : "" }}
+                              disabled={values.assignedLead == "" || null}
+                              name="alternateLead"
+                              placeholder="Enter your lead Source"
+                              className="w-full rounded-md border border-transparent py-2.5 px-6 text-base 
+                              text-body-color placeholder-body-color shadow-one outline-none focus:border-primary 
+                              focus-visible:shadow-none dark:bg-[#242B51] dark:shadow-signUp"
+                            >
+                              <option value={""}>--SELECT ALTERNATE ASSIGNED LEAD--</option>
+                              {filterUser && filterUser.filter(item => (item && item.role && item.role.slug == "lead") && values.assignedLead !== item._id).map((ele) => {
+                                return (
+                                  <>
+                                    <option
+                                      value={ele._id}>{(ele.firstName).charAt(0).toUpperCase() + ele.firstName.slice(1)} {(ele.lastName).charAt(0).toUpperCase() + ele.lastName.slice(1)}</option>
+                                  </>
+                                )
+                              })}
+                            </Field>
+
+                            <ErrorMessage
+                              name="alternateLead"
+                              render={(msg) => (
+                                <small style={{ color: "red" }}>{msg}</small>
+                              )}
+                            />
+                          </div>
+                        </div>
+                        <div className="w-full px-4 md:w-1/2">
+                          <div className="mb-8">
+                            <label
+                              htmlFor="name"
+                              className="mb-3 block text-sm font-medium text-dark dark:text-white"
+                            >
+                              Lead Owner
+                            </label>
+                            <Field
+                              name="leadOwner"
+                              type="text"
+                              placeholder="Enter your  Lead Owner Name"
+                              className="w-full rounded-md border border-transparent py-2.5 px-6 text-base text-body-color placeholder-body-color shadow-one outline-none focus:border-primary focus-visible:shadow-none dark:bg-[#242B51] dark:shadow-signUp"
+                            />
+                            <ErrorMessage
+                              name="leadOwner"
+                              render={(msg) => (
+                                <small style={{ color: "red" }}>{msg}</small>
+                              )}
+                            />
+                          </div>
+                        </div>
+                   
+                        <div className="w-full px-4 md:w-1/2">
+                          <div className="mb-8">
+                            <label
+                              htmlFor="whatisyourbudget"
+                              className="mb-3 block text-sm font-medium text-dark dark:text-white"
+                            >
+                              What is Your Budget
+                            </label>
+                            <Field
+                              type="text"
+                              name="whatisyourbudget"
+                              placeholder="Enter your Your Budget"
+                              className="w-full rounded-md border border-transparent py-2.5 px-6 text-base 
+                              text-body-color placeholder-body-color shadow-one outline-none focus:border-primary 
+                              focus-visible:shadow-none dark:bg-[#242B51] dark:shadow-signUp"
+                            />
+
+                            <ErrorMessage
+                              name="whatisyourbudget"
+                              render={(msg) => (
+                                <small style={{ color: "red" }}>{msg}</small>
+                              )}
+                            />
+                          </div>
+                        </div>
+
                         <div className="w-full px-4 md:w-1/2">
                           <div className="mb-8">
                             <label
@@ -578,7 +673,30 @@ console.log(userData)
                             />
                           </div>
                         </div>
-                        <div className="w-full  ">
+                        <div className="w-full px-4 md:w-1/2">
+                          <div className="mb-8">
+                            <label
+                              htmlFor="reminderCall"
+                              className="mb-3 block text-sm font-medium text-dark dark:text-white"
+                            >
+                              Reminder call
+                            </label>
+                            <Field
+                              type="datetime-local"
+                              name="reminderCall"
+                              className="w-full rounded-md border border-transparent py-2.5 px-6 text-base 
+                              text-body-color placeholder-body-color shadow-one outline-none focus:border-primary 
+                              focus-visible:shadow-none dark:bg-[#242B51] dark:shadow-signUp"
+                            />
+                            <ErrorMessage
+                              name="reminderCall"
+                              render={(msg) => (
+                                <small style={{ color: "red" }}>{msg}</small>
+                              )}
+                            />
+                          </div>
+                        </div>
+                        <div className="w-full">
                           {" "}
                           <h3
                             className="p-4 text-bolder"
@@ -616,9 +734,7 @@ console.log(userData)
 
                         <div className="w-75 px-4">
                           <button
-                            className="rounded-md py-2.5
-                             px-9 text-base font-medium text-white
-                              transition duration-300 ease-in-out hover:bg-opacity-80 hover:shadow-signUp"
+                            className="rounded-md py-2.5 px-9 text-base font-medium text-white transition duration-300 ease-in-out hover:bg-opacity-80 hover:shadow-signUp"
                             style={{ background: "#3C4B64" }}
                             type="submit"
                           >
@@ -643,4 +759,4 @@ console.log(userData)
   );
 }
 
-export default AddLead;
+export default UpdateLead;

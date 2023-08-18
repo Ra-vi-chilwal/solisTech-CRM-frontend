@@ -12,7 +12,6 @@ function RoleDetails() {
     dispatch(fetchCompany());
   }, []);
   const { loading, companyInfo, error } = useSelector((store) => store) || " ";
-  console.log(companyInfo.userInfo);
   const role = companyInfo?.userInfo?.data;
   const columns = [
     {

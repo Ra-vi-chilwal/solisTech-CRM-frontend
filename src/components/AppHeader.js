@@ -16,10 +16,12 @@ import { cilBell, cilEnvelopeOpen, cilList, cilMenu } from '@coreui/icons'
 
 import { AppBreadcrumb } from './index'
 import { AppHeaderDropdown } from './header/index'
-
 const AppHeader = () => {
+  
   const dispatch = useDispatch()
   const sidebarShow = useSelector((state) => state.sidebarShow)
+  const { loading, userInfo, error } = useSelector(store => store.userInfo);
+  const userPayload = userInfo && userInfo.payload && userInfo.payload.firstName
 
   return (
     <CHeader position="sticky" className="mb-4">
@@ -64,6 +66,7 @@ const AppHeader = () => {
           </CNavItem>
         </CHeaderNav>
         <CHeaderNav className="ms-3">
+          <p>{userPayload}</p>
           <AppHeaderDropdown />
         </CHeaderNav>
       </CContainer>

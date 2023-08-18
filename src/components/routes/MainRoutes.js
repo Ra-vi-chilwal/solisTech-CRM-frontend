@@ -1,11 +1,13 @@
 import React, { Children } from 'react'
 import DefaultLayout from '../../layout/DefaultLayout'
+import UpdateLead from '../../views/Source/subManualData/UpdateLead'
 const Dashboard = React.lazy(() => import('../../views/dashboard/Dashboard'))
 const Role = React.lazy(() => import('../../views/AdminTool/Role'))
 const Plan = React.lazy(() => import('../../views/AdminTool/Plan'))
 const Company = React.lazy(() => import('../../views/AdminTool/Company'))
 const User = React.lazy(() => import('../../views/AdminTool/User'))
 const Custom = React.lazy(() => import('../../views/Source/ManualData'))
+const SubMenual = React.lazy(() => import('../../views/Source/subManualData/subManualDetails'))
 const MainRoutes = {
 path:"/",
 element:<DefaultLayout/>,
@@ -54,9 +56,16 @@ children:[
     },
     {
         
-            path: 'admin-tool/role',
+            path: 'source/custom/update/:id',
             permissions: [{ label: "Read", value: "read" }],
-            element: <Role />
+            element: <UpdateLead />
+        
+    },
+    {
+        
+            path: 'source/custom/:id',
+            permissions: [{ label: "Read", value: "read" }],
+            element: < SubMenual/>
         
     },
     {

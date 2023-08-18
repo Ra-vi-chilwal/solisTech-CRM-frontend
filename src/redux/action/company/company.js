@@ -12,7 +12,6 @@ const fetchCompany = (token) => {
         dispatch({ type: COMPANY_REQUEST });
         const data = await axios.get(`${config.API_URL}/company/get`, { headers: { Authorization: `Bearer ${token}` }});
         const companyData = data.data;
-        console.log(companyData)
         dispatch({ type: COMPANY_SUCCESS, payload: companyData });
       } catch (err) {
           dispatch({ type: COMPANY_FAIL, payload:err});

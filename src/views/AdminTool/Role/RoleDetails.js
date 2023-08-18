@@ -49,7 +49,7 @@ const role = RoleData?.userInfo?.data;
                                     {/* <strong>{item.permission}</strong> */}
                                     <ul>
                                         {item && item.permission.map((item, index) => {
-                                            console.log(item)
+                                        
                                             return (
                                                 <li key={index} style={{ float: "left" }}><div className='badge badge-sm badge-dark m-1'>{item.value}</div></li>
                                             )

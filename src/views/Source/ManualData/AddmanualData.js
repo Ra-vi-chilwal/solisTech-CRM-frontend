@@ -18,7 +18,8 @@ function AddmanualData(props) {
           </span>
         </button>
       </div>
-    <AddLead/>
+      
+    <AddLead setShowModal={setShowModal}/>
     </div>
   )
 }

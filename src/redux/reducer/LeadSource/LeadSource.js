@@ -8,7 +8,7 @@ import {
     loading: false,
   };
   const fetchLeadSourceReducer = (state = initialState, action) => {
-    console.log(action,'action')
+   
     switch (action.type) {
       case LEADSOURCE_REQUEST:
         return { ...state, loading: true };

@@ -55,7 +55,7 @@ const role = RoleData?.userInfo?.data;
         }
       });
       const userData = response.data;
-      console.log(response)
+
       if(userData.code == "DUPLICATEDATA"){
         Swal.fire({
           icon: 'warning',
