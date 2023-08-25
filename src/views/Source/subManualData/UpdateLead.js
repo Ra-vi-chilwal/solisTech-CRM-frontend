@@ -57,7 +57,8 @@ function UpdateLead(props) {
     assignedLead: receivedData && receivedData.assignedUser && receivedData.assignedUser[2] && receivedData.assignedUser[2].id || "",
     alternateLead: receivedData && receivedData.assignedUser && receivedData.assignedUser[3] && receivedData.assignedUser[3].id || "",
     reminderCall: receivedData && receivedData.reminderCall && receivedData.reminderCall.substring(0, 16) || "",
-    company: companyData
+    company: companyData,
+    keyValuePairs: [{ key: '', value: '' }],
   };
   const validationSchema = Yup.object({
     leadOwner: Yup.string().required("Lead Owner is required"),
@@ -77,8 +78,7 @@ function UpdateLead(props) {
 
   const onSubmit = async (values) => {
     try {
-
-      const response = await axios.post(`${config.API_URL}/leadSource/update/${id}`, {
+      const response = await axios.post(`${config.API_URL}/leadSource/update/${id}`,{
         ...values, assignedUser: [{
           "id": values.assignedManager,
           "managerstatus": true,
@@ -153,7 +153,7 @@ function UpdateLead(props) {
               initialValues={initialValues}
               validationSchema={validationSchema}
               onSubmit={onSubmit}
-              // initialValues={{ friends: ['jared', 'ian', 'brent'] }}
+            // initialValues={{ friends: ['jared', 'ian', 'brent'] }}
             >
               {({ values, setFieldValue, errors, dirty, isValid }) => {
                 console.log(values)
@@ -511,7 +511,7 @@ function UpdateLead(props) {
                             />
                           </div>
                         </div>
-                   
+
                         <div className="w-full px-4 md:w-1/2">
                           <div className="mb-8">
                             <label
@@ -696,6 +696,42 @@ function UpdateLead(props) {
                             />
                           </div>
                         </div>
+
+                        <FieldArray name="keyValuePairs">
+                          {({ push, remove }) => (
+                            <div>
+                              {values.keyValuePairs.map((pair, index) => (
+                                <div key={index} className="d-flex">
+                                  {/* <Field name={`keyValuePairs.${index}.key`} placeholder="Key" /> */}
+                                <div>
+                                <Field
+                                    type="firstMeeting"
+                                    name={`keyValuePairs.${index}.key`}
+                                    className="w-full rounded-md border border-transparent py-2.5 px-6 text-base 
+                                    text-body-color placeholder-body-color shadow-one outline-none focus:border-primary 
+                                    focus-visible:shadow-none dark:bg-[#242B51] dark:shadow-signUp"
+                                  />
+                                  <ErrorMessage
+                                    name="firstMeeting"
+                                    render={(msg) => (
+                                      <small style={{ color: "red" }}>{msg}</small>
+                                    )}
+                                  />
+                                  </div> 
+                                 <div>
+                                  <button type="button" onClick={() => remove(index)}>
+                                    -
+                                  </button>
+                                  <button type="button" onClick={() => push({ key: '', value: '' })}>
+                                    +
+                                  </button>
+                                  </div>
+                                </div>
+                              ))}
+
+                            </div>
+                          )}
+                        </FieldArray>
                         <div className="w-full">
                           {" "}
                           <h3

@@ -48,13 +48,14 @@ export default function LeadHistory() {
                     // console.log(ele)  
                     for (const key in ele) {
                       console.log(`Property "${key}" has a non-null value: ${ele[key]}`);
-                      if ( ele[key] !== null || ele[key] !== " ") {
+                      if ( ele[key] !== null || ele[key] !== " " ) {
+                        
                         return (
                           <>
                             <div>
                               {keyValuePairs.map(([key, value], index) => (
                                 <p key={index} style={{ fontFamily: "poppins",color:"black" }}>
-                                  {key}:<strong>{Array.isArray(value)?"": value}</strong>
+                                  {key=="assignedManager" || key == "alternateManager" || key == "assignedLead" || key == "assignedUser"|| key=="alternateLead" || key == "reminderCall " || key == "company" || key == "reminderCall"?"":key} <strong>{Array.isArray(value)|| key == "assignedManager" || key == "alternateManager" || key == "company"|| key == "reminderCall" ||  key == "assignedLead" || key=="alternateLead" ?"": value }</strong>
                                 </p>
                               ))}
                             </div>

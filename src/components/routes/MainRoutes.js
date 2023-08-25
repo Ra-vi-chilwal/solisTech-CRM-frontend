@@ -7,6 +7,7 @@ const Plan = React.lazy(() => import('../../views/AdminTool/Plan'))
 const Company = React.lazy(() => import('../../views/AdminTool/Company'))
 const User = React.lazy(() => import('../../views/AdminTool/User'))
 const Custom = React.lazy(() => import('../../views/Source/ManualData'))
+const Facebook = React.lazy(() => import('../../views/Source/FacebookLead/getFacebookLead'))
 const SubMenual = React.lazy(() => import('../../views/Source/subManualData/subManualDetails'))
 const MainRoutes = {
 path:"/",
@@ -47,6 +48,15 @@ children:[
             element: <Role />
         
     },
+
+    //facebook
+    {
+        
+        path: 'source/facebook',
+        permissions: [{ label: "Read", value: "read" }],
+        element: <Facebook />
+    
+},
     {
         
             path: 'source/custom',

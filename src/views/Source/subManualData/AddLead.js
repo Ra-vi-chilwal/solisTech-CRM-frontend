@@ -82,7 +82,6 @@ function AddLead(props) {
         }
       );
       const userData = response.data;
-console.log(userData)
       if (userData.code == "DUPLICATEDATA") {
         Swal.fire({
           icon: "warning",

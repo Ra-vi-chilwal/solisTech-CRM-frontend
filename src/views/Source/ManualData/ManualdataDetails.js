@@ -33,8 +33,19 @@ function ManualdataDetails() {
   const leadSource = LeadSource && LeadSource.userInfo && LeadSource.userInfo.data;
 console.log(leadSource,'leadSource')
   // const lead = leadSource && 
-
+const actionFunction = (data)=>{
+   
+}
   const columns = [
+    {
+      name: 'Move To',
+
+      cell: row => <div>
+        <button className="p-1" onClick={()=>{actionFunction("REJECTED")}}><span className="move-icons">❌</span></button>
+        <button className="p-1" onClick={()=>{actionFunction("ACCEPTED")}}><span className="move-icons">✅</span></button>
+      
+      </div>
+    },  
     {
       name: 'Action',
 
