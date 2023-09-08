@@ -7,6 +7,7 @@ import config from "../../../config";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUserInfo } from "../../../redux/action/user";
+import logo from '../../../assets/images/SoliTech-Logo-01.png'
 function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -47,6 +48,7 @@ function Login() {
                 className="mx-auto max-w-[500px] rounded-md  bg-opacity-5 py-10 px-6 dark:bg-dark sm:p-[60px]"
                 style={{ background: "#1D2144" }}
               >
+                <img src={logo} alt='logo' className="w-25"/>
                 <h3 className="mb-3 text-center text-2xl font-bold text-white dark:text-white sm:text-3xl">
                   Sign in to your account
                 </h3>

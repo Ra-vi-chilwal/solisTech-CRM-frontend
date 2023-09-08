@@ -5,7 +5,8 @@ import {fetchRoleReducer} from './reducer/role/role';
 import {fetchCompanyReducer} from './reducer/company/company';
 import {fetchPlanReducer} from './reducer/plan/plan';
 import {fetchUserApiReducer} from './reducer/UserApi/UserApi';
-import {fetchLeadSourceReducer} from './reducer/LeadSource/LeadSource'
+import {fetchLeadSourceReducer} from './reducer/LeadSource/LeadSource';
+import {fetchWebsiteLeadSourceReducer} from './reducer/LeadSource/WebsiteLeadSource';
 const initialState = {};
 const reducer = combineReducers({
   userInfo: userInfoReducer,
@@ -14,6 +15,7 @@ const reducer = combineReducers({
  planInfo : fetchPlanReducer,
  userApi : fetchUserApiReducer,
  LeadSource : fetchLeadSourceReducer,
+ WebsiteLeadSource : fetchWebsiteLeadSourceReducer,
 });
 
 const composeEnhancer = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;

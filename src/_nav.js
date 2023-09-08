@@ -23,7 +23,13 @@ import {
   cibFlutter
 } from '@coreui/icons'
 import { CNavGroup, CNavItem, CNavTitle } from '@coreui/react'
+import { useSelector } from 'react-redux';
 
+
+
+// var token = localStorage.getItem("token") || " ";
+// const { loading, userInfo, error } = useSelector(store => store.userInfo);
+// console.log(userInfo)
 const _nav = [
   {
     component: CNavItem,
@@ -35,9 +41,6 @@ const _nav = [
       text: 'NEW',
     },
   },
-
-
-
   {
     component: CNavTitle,
     name: 'Components',
@@ -57,8 +60,7 @@ const _nav = [
       {
         component: CNavItem,
         name: 'Facebook',
-        icon: <CIcon icon={cibFacebook
-        } customClassName="nav-icon" />,
+        icon: <CIcon icon={cibFacebook} customClassName="nav-icon" />,
         to: '/source/facebook',
       },
       {
@@ -79,12 +81,16 @@ const _nav = [
         icon: <CIcon icon={cibGoogle} customClassName="nav-icon" />,
         to: '/source/google-ads',
       },
-      {
-        component: CNavItem,
-        name: 'Linkdin',
-        icon: <CIcon icon={cibLinkedinIn} customClassName="nav-icon" />,
-        to: '/source/linkdin',
-      },
+     
+        
+            {
+              component: CNavItem,
+              name: 'LinkedIn',
+              icon: <CIcon icon={cibLinkedinIn} customClassName="nav-icon" />,
+              to: '/source/linkedin',
+            },
+          
+       
       {
         component: CNavItem,
         name: 'Manual Data',
@@ -103,45 +109,35 @@ const _nav = [
         icon: <CIcon icon={cibFlutter} customClassName="nav-icon" />,
         to: '/source/custom',
       },
-
     ],
   },
-
- 
-
-
   {
     component: CNavGroup,
     name: 'Admin Tool',
-    icon: <CIcon icon={cilUserPlus
-    } customClassName="nav-icon" />,
+    icon: <CIcon icon={cilUserPlus} customClassName="nav-icon" />,
     items: [
       {
         component: CNavItem,
         name: 'Role',
-        icon: <CIcon icon={cilCouch
-        } customClassName="nav-icon" />,
+        icon: <CIcon icon={cilCouch} customClassName="nav-icon" />,
         to: '/admin-tool/role',
       },
       {
         component: CNavItem,
         name: 'Company',
         to: '/admin-tool/company',
-        icon: <CIcon icon={cilBuilding
-        } customClassName="nav-icon" />,
+        icon: <CIcon icon={cilBuilding} customClassName="nav-icon" />,
       },
       {
         component: CNavItem,
         name: 'Plan',
-        icon: <CIcon icon={cilUsb
-        } customClassName="nav-icon" />,
+        icon: <CIcon icon={cilUsb} customClassName="nav-icon" />,
         to: '/admin-tool/plan',
       },
       {
         component: CNavItem,
         name: 'User',
-        icon: <CIcon icon={cilGroup
-        } customClassName="nav-icon" />,
+        icon: <CIcon icon={cilGroup} customClassName="nav-icon" />,
         to: '/admin-tool/user',
       },
     ],
@@ -149,41 +145,13 @@ const _nav = [
   {
     component: CNavItem,
     name: 'Logout',
-    icon: <CIcon icon={cilHttps
-    } customClassName="nav-icon" />,
+    icon: <CIcon icon={cilHttps} customClassName="nav-icon" />,
     to: '/auth/login',
   },
   {
     component: CNavTitle,
     name: 'Extras',
   },
-  // {
-  //   component: CNavGroup,
-  //   name: 'Pages',
-  //   icon: <CIcon icon={cilUserPlus} customClassName="nav-icon" />,
-  //   items: [
-  //     {
-  //       component: CNavItem,
-  //       name: 'Login',
-  //       to: '/login',
-  //     },
-  //     {
-  //       component: CNavItem,
-  //       name: 'Register',
-  //       to: '/register',
-  //     },
-  //     {
-  //       component: CNavItem,
-  //       name: 'Error 404',
-  //       to: '/404',
-  //     },
-  //     {
-  //       component: CNavItem,
-  //       name: 'Error 500',
-  //       to: '/500',
-  //     },
-  //   ],
-  // },
   {
     component: CNavItem,
     name: 'Docs',
@@ -192,4 +160,4 @@ const _nav = [
   },
 ]
 
-export default _nav
+export default _nav;

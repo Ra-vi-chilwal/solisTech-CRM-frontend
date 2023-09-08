@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ErrorMessage, Field, Form, Formik } from "formik";
+import { ErrorMessage, Field, FieldArray, Form, Formik } from "formik";
 import Select from "react-select";
 import * as Yup from "yup";
 import axios from "axios";
@@ -20,6 +20,7 @@ function AddLead(props) {
   const filterUser = userDetails && userDetails.filter((ele) => {
     return ele.company._id === companyId;
   });
+  console.log(filterUser)
   //role
   const { RoleData } = useSelector((store) => store) || " ";
   const role = RoleData?.userInfo?.data;
@@ -274,14 +275,14 @@ function AddLead(props) {
                           </div>
                         </div>
 
-                      
+
                         <div className="w-full px-4 md:w-1/2">
                           <div className="mb-8">
                             <label
                               htmlFor="assignedManager"
                               className="mb-3 block text-sm font-medium text-dark dark:text-white"
                             >
-                              Assigned Manager
+                              Team Leader
                             </label>
                             <Field
                               as="select"
@@ -292,10 +293,10 @@ function AddLead(props) {
                               text-body-color placeholder-body-color shadow-one outline-none focus:border-primary 
                               focus-visible:shadow-none dark:bg-[#242B51] dark:shadow-signUp"
                             >
-                              <option>--SELECT ASSIGNED MANAGER--</option>
-                              {filterUser && filterUser.filter(item => item && item.role && item.role.slug == "manager").map((ele) => {
-                             
-                               return (
+                              <option>--SELECT TEAM LEADER--</option>
+                              {filterUser && filterUser.filter(item => item && item.role && item.role.slug == "team-leader").map((ele) => {
+                                console.log(ele, 'op')
+                                return (
                                   <>
                                     <option value={ele._id}>{(ele.firstName).charAt(0).toUpperCase() + ele.firstName.slice(1)} {(ele.lastName).charAt(0).toUpperCase() + ele.lastName.slice(1)}</option>
                                   </>
@@ -317,7 +318,7 @@ function AddLead(props) {
                               htmlFor="alternateManager"
                               className="mb-3 block text-sm font-medium text-dark dark:text-white"
                             >
-                              Alternate Assigned Manager
+                              Alternate Team Leader
                             </label>
                             <Field
                               as="select"
@@ -330,8 +331,8 @@ function AddLead(props) {
                               text-body-color placeholder-body-color shadow-one outline-none focus:border-primary 
                               focus-visible:shadow-none dark:bg-[#242B51] dark:shadow-signUp"
                             >
-                              <option>--SELECT ALTERNATE ASSIGNED MANAGER--</option>
-                              {filterUser && filterUser.filter(item => (item && item.role && item.role.slug == "manager") && values.assignedManager !==item._id).map((ele) => {
+                              <option>--SELECT TEAM LEADER--</option>
+                              {filterUser && filterUser.filter(item => (item && item.role && item.role.slug == "team-leader") && values.assignedManager !== item._id).map((ele) => {
                                 return (
                                   <>
                                     <option value={ele._id}>{(ele.firstName).charAt(0).toUpperCase() + ele.firstName.slice(1)} {(ele.lastName).charAt(0).toUpperCase() + ele.lastName.slice(1)}</option>
@@ -439,9 +440,9 @@ function AddLead(props) {
                             />
                           </div>
                         </div>
-                       
-                      
-                      
+
+
+
                         <div className="w-full px-4 md:w-1/2">
                           <div className="mb-8">
                             <label
@@ -577,6 +578,7 @@ function AddLead(props) {
                             />
                           </div>
                         </div>
+
                         <div className="w-full  ">
                           {" "}
                           <h3
@@ -611,6 +613,8 @@ function AddLead(props) {
                             />
                           </div>
                         </div>
+                     
+
                         {/* //*/}
 
                         <div className="w-75 px-4">

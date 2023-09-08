@@ -39,16 +39,16 @@ function AddRole(props) {
       },
     });
     const userData = response.data;
-    if(userData.code == "DUPLICATEDATA"){
+    if(userData.code == "DUPLICATION"){
       Swal.fire({
         icon: 'warning',
         title: 'Oops...',
-        text: 'User Already Exists',
+        text: 'Role Already Exists',
 
       })
       setShowModal(false)
     }
-    if(userData.code == "CREATED"){
+    if(userData.code == "SUCCESS"){
       Swal.fire({
         icon: 'success',
         title: 'Woh...',
@@ -138,13 +138,11 @@ function AddRole(props) {
                                     .replace(/\s+/g, "-")
                                 );
                               }}
-                              as="select"
+                             type='text'
                               placeholder="Enter your Title"
                               className="w-full rounded-md border border-transparent py-2.5 px-6 text-base text-body-color placeholder-body-color shadow-one outline-none focus:border-primary focus-visible:shadow-none dark:bg-[#242B51] dark:shadow-signUp"
                             >
-                              <option value="admin">Admin</option>
-                              <option value="manager">Manager(BDM)</option>
-                              <option value="lead">Lead Executive(BDE)</option>
+                              
                             </Field>
                             <ErrorMessage
                               name="title"

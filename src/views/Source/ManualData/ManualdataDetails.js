@@ -31,7 +31,6 @@ function ManualdataDetails() {
   }, []);
   const { loading, LeadSource, error } = useSelector((store) => store) || " ";
   const leadSource = LeadSource && LeadSource.userInfo && LeadSource.userInfo.data;
-console.log(leadSource,'leadSource')
   // const lead = leadSource && 
 const actionFunction = (data)=>{
    

@@ -7,14 +7,15 @@ import { useDispatch, useSelector } from "react-redux";
 
 import Loader from '../../../components/Loader/loader'
 function UserDetails() {
-   
-  
-
-    const { loading, userApi, error } =
+   const { loading, userApi, error } =
     useSelector((store) => store) || " ";
 const role = userApi?.userInfo?.data
 
     const columns = [
+        {
+            name: "Company",
+            selector: (row) => row?.company?.company,
+        },
         {
             name: "First Name",
             selector: (row) => row?.firstName,
@@ -27,6 +28,11 @@ const role = userApi?.userInfo?.data
             name: "Email",
             selector: (row) => row?.email,
         },
+        {
+            name: "Role",
+            selector: (row) => row?.role?.title,
+        },
+       
         {
             name: "Created At",
             selector: (row) => row?.createdAt,

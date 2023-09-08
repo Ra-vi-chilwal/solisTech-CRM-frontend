@@ -7,12 +7,9 @@ import { useDispatch, useSelector } from "react-redux";
 import config from "../../../config";
 import {fetchRole} from "../../../redux/action/role/role"
 function RoleDetails() {
-
- 
     const { loading, RoleData, error } =
     useSelector((store) => store) || " ";
 const role = RoleData?.userInfo?.data;
-
     const columns = [
         {
             name: "Title",
@@ -36,7 +33,8 @@ const role = RoleData?.userInfo?.data;
             </div>
         },
     ];
-
+  
+    
     const ExpandableComponent = (props) => {
         return (
             <>
@@ -49,7 +47,6 @@ const role = RoleData?.userInfo?.data;
                                     {/* <strong>{item.permission}</strong> */}
                                     <ul>
                                         {item && item.permission.map((item, index) => {
-                                        
                                             return (
                                                 <li key={index} style={{ float: "left" }}><div className='badge badge-sm badge-dark m-1'>{item.value}</div></li>
                                             )
