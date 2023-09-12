@@ -24,12 +24,9 @@ import {
 } from '@coreui/icons'
 import { CNavGroup, CNavItem, CNavTitle } from '@coreui/react'
 import { useSelector } from 'react-redux';
-
-
-
 // var token = localStorage.getItem("token") || " ";
 // const { loading, userInfo, error } = useSelector(store => store.userInfo);
-// console.log(userInfo)
+// console.log(userInfo)  
 const _nav = [
   {
     component: CNavItem,

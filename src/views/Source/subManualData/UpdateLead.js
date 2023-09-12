@@ -15,7 +15,6 @@ function UpdateLead(props) {
   useEffect(() => {
     dispatch(fetchUserApi(token));
   }, [])
-
   var token = localStorage.getItem("token");
   const location = useLocation();
   const receivedData = location && location.state;
@@ -164,7 +163,6 @@ function UpdateLead(props) {
   const expectedManager = ["read", "create", "update"];
   const expectedAdmin = ["read", "create", "update", 'delete'];
   // filter for show and hide input field && 
-  console.log(userPermission, 'sdk')
   const inputfiledforLead = userPermission.every((perm, index) => perm.value === expectedManager[index]) && userPermission.length === expectedManager.length
   const inputfiledforManager = userPermission.every((perm, index) => perm.value === expectedAdmin[index]) && userPermission.length === expectedAdmin.length
 
@@ -399,7 +397,8 @@ function UpdateLead(props) {
                               focus-visible:shadow-none dark:bg-[#242B51] dark:shadow-signUp"
                             >
                               <option>--SELECT ASSIGNED MANAGER--</option>
-                              {filterUser && filterUser.filter(item => item?.role?.permission.every((perm, index) => perm.value === expectedManager[index]) && item?.role?.permission.length === expectedManager.length).map((ele) => {
+                              {filterUser && filterUser.filter(item => item?.role?.permission.every((perm, index) => perm.value === expectedManager[index]) 
+                              && item?.role?.permission.length === expectedManager.length).map((ele) => {
                                 return (
                                   <>
                                     <option value={ele._id}>{(ele.firstName).charAt(0).toUpperCase() + ele.firstName.slice(1)} {(ele.lastName).charAt(0).toUpperCase() + ele.lastName.slice(1)}</option>

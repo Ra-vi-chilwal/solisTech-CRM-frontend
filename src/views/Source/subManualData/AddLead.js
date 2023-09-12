@@ -20,7 +20,6 @@ function AddLead(props) {
   const filterUser = userDetails && userDetails.filter((ele) => {
     return ele.company._id === companyId;
   });
-  console.log(filterUser)
   //role
   const { RoleData } = useSelector((store) => store) || " ";
   const role = RoleData?.userInfo?.data;
@@ -83,6 +82,7 @@ function AddLead(props) {
         }
       );
       const userData = response.data;
+      console.log(response.data,'swdj')
       if (userData.code == "DUPLICATEDATA") {
         Swal.fire({
           icon: "warning",
@@ -295,7 +295,7 @@ function AddLead(props) {
                             >
                               <option>--SELECT TEAM LEADER--</option>
                               {filterUser && filterUser.filter(item => item && item.role && item.role.slug == "team-leader").map((ele) => {
-                                console.log(ele, 'op')
+                               
                                 return (
                                   <>
                                     <option value={ele._id}>{(ele.firstName).charAt(0).toUpperCase() + ele.firstName.slice(1)} {(ele.lastName).charAt(0).toUpperCase() + ele.lastName.slice(1)}</option>

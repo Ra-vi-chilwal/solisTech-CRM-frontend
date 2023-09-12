@@ -5,6 +5,8 @@ import DataTableExtensions from "react-data-table-component-extensions";
 import "react-data-table-component-extensions/dist/index.css";
 import { useDispatch, useSelector } from "react-redux";
 import FilterComponent from "./FilterComponent";
+import Inprogess from '../../../assets/images/inprogress.jpg';
+import Reject from '../../../assets/images/3712216.png';
 import {
   CButton,
   CCard,
@@ -23,6 +25,8 @@ import { Link } from "react-router-dom";
 import { fetchUserApi } from "../../../redux/action/UserApi/UserApi";
 import Loading from '../../../components/Loader/loader'
 import { useMemo } from "react";
+import Swal from "sweetalert2";
+import config from "../../../config";
 function ManualdataDetails() {
   const dispatch = useDispatch();
   var token = localStorage.getItem("token");
@@ -32,26 +36,79 @@ function ManualdataDetails() {
   const { loading, LeadSource, error } = useSelector((store) => store) || " ";
   const leadSource = LeadSource && LeadSource.userInfo && LeadSource.userInfo.data;
   // const lead = leadSource && 
-const actionFunction = (data)=>{
-   
+  const {userInfo } = useSelector((store) => store.userInfo) || " ";
+  const expectedAdmin = ["read", "create", "update", 'delete']; 
+  const userPermission = userInfo && userInfo.payload && userInfo.payload && userInfo.payload.role[0]?.permission
+  const inputFieldForManager = 
+  userPermission.length === expectedAdmin.length &&
+  userPermission.every(perm => expectedAdmin.includes(perm.value));
+console.log(inputFieldForManager)
+const actionFunction = async (id)=>{
+  console.log(id)
+  try {
+    const response = await axios.post(`${config.API_URL}/leadSource/accept`, {
+      id,
+    },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json", // Set the content type for file upload
+          // Add any other headers you need
+        },
+      }
+    );
+    const userData = response;
+   console.log(userData)
+     if (userData.data.code == "SUCCESS") {
+      Swal.fire({
+        icon: "success",
+        title: "Woh...",
+        text: "Lead accepted ",
+      });
+     
+    }
+    else if (userData.code == "ERROROCCURED") {
+      Swal.fire({
+        icon: "error",
+        title: "Oops",
+        text: error,
+      });
+
+    }
+  } catch (error) {
+    console.log(error)
+    Swal.fire({
+      icon: "error",
+      title: "Oops",
+      text: error,
+    });
+ 
+  }
 }
   const columns = [
     {
       name: 'Move To',
 
-      cell: row => <div>
-        <button className="p-1" onClick={()=>{actionFunction("REJECTED")}}><span className="move-icons">❌</span></button>
-        <button className="p-1" onClick={()=>{actionFunction("ACCEPTED")}}><span className="move-icons">✅</span></button>
+      cell: row => 
       
+        <div>
+          {/* <p>{row.isShow}</p> */}
+            {row.isShow == "ACCEPTED"? <img src={Inprogess} className="img-fluid w-25"/>: row.isShow == 
+            'REJECTED'? <img src={Reject} className="img-fluid w-25"/>:
+            <>
+                   {inputFieldForManager? <button className="p-1" onClick={()=>{actionFunction("REJECTED")}}><span className="move-icons">❌</span></button>:""}
+        <button className="p-1" onClick={()=>{actionFunction(row._id)}}><span className="move-icons">✅</span></button>
+            </>
+
+    }
       </div>
     },  
     {
       name: 'Action',
-
       cell: row => <div>
         <Link to={`${row._id}`} state={row} > <spna className><i class="bi bi-arrows-fullscreen" style={{ marginRight: "8px", fontSize: "14px" }}></i></spna></Link>
         <Link to={`update/${row._id}`} state={row}><button className='btn btn-warning me-1 btn-sm'><i className='icon-pencil'></i></button></Link>
-        <button className='btn btn-danger btn-sm'><i className=' icon-trash'></i></button>
+        {inputFieldForManager?<button className='btn btn-danger btn-sm'><i className=' icon-trash'></i></button>:""}
       </div>
     },
     {
